@@ -1,0 +1,161 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 416" width="100%" role="img" aria-label="Referentna enterprise topologija sa FortiGate HA klasterima" font-family="Inter, 'DejaVu Sans', sans-serif">
+  <style>
+    .band { fill: #f6f8fb; }
+    .band-alt { fill: #eef2f7; }
+    .bl { font-size: 8.6px; font-weight: 700; letter-spacing: .06em; fill: #1c5cab; }
+    .bs { font-size: 7.6px; fill: #6b7482; }
+    .box { fill: #ffffff; stroke: #c9d1dc; stroke-width: 1; }
+    .zone { fill: #ffffff; stroke: #c9d1dc; stroke-width: 1; }
+    .fgt { fill: #0b1f3a; }
+    .t { font-size: 9.6px; font-weight: 600; fill: #0f172a; }
+    .ts { font-size: 8px; fill: #5d6778; }
+    .tw { font-size: 9.4px; font-weight: 600; fill: #ffffff; }
+    .tws { font-size: 7.8px; fill: #b9c7dd; }
+    .prod { stroke: #6b7482; stroke-width: 1.2; fill: none; }
+    .isl { stroke: #6b7482; stroke-width: 2.4; }
+    .vpn { stroke: #2a78d6; stroke-width: 1.4; fill: none; stroke-dasharray: 5 3; }
+    .hb { stroke: #eb6834; stroke-width: 1.4; }
+    .warnbox { fill: #fff6f5; stroke: #f0c4c1; stroke-width: 1; }
+  </style>
+
+  <!-- bands -->
+  <rect class="band" x="0" y="0" width="640" height="76" rx="6"/>
+  <rect class="band-alt" x="0" y="80" width="640" height="78" rx="6"/>
+  <rect class="band" x="0" y="162" width="640" height="54" rx="6"/>
+  <rect class="band-alt" x="0" y="220" width="640" height="112" rx="6"/>
+  <rect class="band" x="0" y="336" width="640" height="80" rx="6"/>
+
+  <text class="bl" x="10" y="34">WAN</text>
+  <text class="bs" x="10" y="45">Internet · ISP</text>
+  <text class="bl" x="10" y="115">EDGE</text>
+  <text class="bs" x="10" y="126">HA klaster</text>
+  <text class="bl" x="10" y="186">CORE</text>
+  <text class="bs" x="10" y="197">MCLAG / vPC</text>
+  <text class="bl" x="10" y="272">PRISTUP · DC</text>
+  <text class="bs" x="10" y="283">kampus · ISFW</text>
+  <text class="bl" x="10" y="373">OOB MGMT</text>
+  <text class="bs" x="10" y="384">izolovana mreža</text>
+
+  <!-- WAN band: remote sites -->
+  <rect class="box" x="96" y="9" width="142" height="58" rx="6"/>
+  <text class="t" x="104" y="24">Udaljene lokacije</text>
+  <text class="ts" x="104" y="37">Korisnici: FortiClient IPsec · ZTNA</text>
+  <text class="ts" x="104" y="49">Filijale: SD-WAN · ADVPN 2.0</text>
+  <text class="ts" x="104" y="61">Cloud: FortiGate-VM</text>
+
+  <!-- Internet + ISPs -->
+  <rect class="box" x="300" y="8" width="112" height="20" rx="10"/>
+  <text class="t" x="356" y="21.5" text-anchor="middle">Internet</text>
+  <rect class="box" x="262" y="44" width="84" height="24" rx="5"/>
+  <text class="t" x="304" y="59.5" text-anchor="middle">ISP A</text>
+  <rect class="box" x="366" y="44" width="84" height="24" rx="5"/>
+  <text class="t" x="408" y="59.5" text-anchor="middle">ISP B</text>
+  <line class="prod" x1="336" y1="28" x2="304" y2="44"/>
+  <line class="prod" x1="376" y1="28" x2="408" y2="44"/>
+
+  <!-- exposure note -->
+  <rect class="warnbox" x="474" y="9" width="158" height="58" rx="6"/>
+  <text class="t" x="482" y="23">Izloženo internetu</text>
+  <text class="ts" x="482" y="36">✓ IPsec/IKE · ZTNA · DMZ servisi</text>
+  <text class="ts" x="482" y="48">✕ admin GUI/SSH · FGFM · CAPWAP</text>
+  <text class="ts" x="482" y="60">✕ SSL-VPN (uklonjen od 7.6.3)</text>
+
+  <!-- overlay tunnel from remote sites to edge -->
+  <polyline class="vpn" points="238,38 252,38 252,113 262,113"/>
+
+  <!-- EDGE band -->
+  <text class="ts" x="244" y="105" text-anchor="end" font-weight="600" fill="#0f172a">FGCP active-passive</text>
+  <text class="ts" x="244" y="117" text-anchor="end">2× heartbeat · session pickup</text>
+  <text class="ts" x="244" y="129" text-anchor="end">reserved HA mgmt port</text>
+  <rect class="fgt" x="262" y="92" width="84" height="42" rx="5"/>
+  <text class="tw" x="304" y="109" text-anchor="middle">FortiGate 1</text>
+  <text class="tws" x="304" y="123" text-anchor="middle">edge · primarni</text>
+  <rect class="fgt" x="366" y="92" width="84" height="42" rx="5"/>
+  <text class="tw" x="408" y="109" text-anchor="middle">FortiGate 2</text>
+  <text class="tws" x="408" y="123" text-anchor="middle">edge · sekundarni</text>
+  <line class="hb" x1="346" y1="106" x2="366" y2="106"/>
+  <line class="hb" x1="346" y1="120" x2="366" y2="120"/>
+  <!-- ISP to both units -->
+  <line class="prod" x1="292" y1="68" x2="292" y2="92"/>
+  <line class="prod" x1="316" y1="68" x2="396" y2="92"/>
+  <line class="prod" x1="396" y1="68" x2="316" y2="92"/>
+  <line class="prod" x1="420" y1="68" x2="420" y2="92"/>
+  <!-- DMZ -->
+  <rect class="zone" x="486" y="92" width="146" height="42" rx="6"/>
+  <text class="t" x="494" y="108">DMZ</text>
+  <text class="ts" x="494" y="122">javni servisi · WAF · reverse proxy</text>
+  <line class="prod" x1="450" y1="113" x2="486" y2="113"/>
+
+  <!-- CORE band -->
+  <rect class="box" x="262" y="175" width="84" height="28" rx="5"/>
+  <text class="t" x="304" y="192.5" text-anchor="middle">Core switch 1</text>
+  <rect class="box" x="366" y="175" width="84" height="28" rx="5"/>
+  <text class="t" x="408" y="192.5" text-anchor="middle">Core switch 2</text>
+  <line class="isl" x1="346" y1="189" x2="366" y2="189"/>
+  <text class="ts" x="244" y="186" text-anchor="end" font-weight="600" fill="#0f172a">LACP ka oba switch-a</text>
+  <text class="ts" x="244" y="198" text-anchor="end">pad switch-a ≠ failover</text>
+  <!-- edge to core full mesh -->
+  <line class="prod" x1="284" y1="134" x2="284" y2="175"/>
+  <line class="prod" x1="324" y1="134" x2="388" y2="175"/>
+  <line class="prod" x1="388" y1="134" x2="324" y2="175"/>
+  <line class="prod" x1="428" y1="134" x2="428" y2="175"/>
+
+  <!-- ACCESS / DC band -->
+  <rect class="zone" x="96" y="234" width="178" height="84" rx="6"/>
+  <text class="t" x="105" y="250">Kampus / korisnici</text>
+  <text class="ts" x="105" y="264">FortiSwitch + FortiAP (FortiLink)</text>
+  <text class="ts" x="105" y="277">VLAN po ulozi: korisnici, gosti,</text>
+  <text class="ts" x="105" y="289">IoT/OT, VoIP, štampači</text>
+  <text class="ts" x="105" y="302">NAC: FortiNAC / FortiSwitch</text>
+  <polyline class="prod" points="276,203 276,218 186,218 186,234"/>
+
+  <rect class="fgt" x="300" y="234" width="84" height="38" rx="5"/>
+  <text class="tw" x="342" y="250" text-anchor="middle">DC FortiGate 1</text>
+  <text class="tws" x="342" y="263" text-anchor="middle">NP7 · ISFW</text>
+  <rect class="fgt" x="404" y="234" width="84" height="38" rx="5"/>
+  <text class="tw" x="446" y="250" text-anchor="middle">DC FortiGate 2</text>
+  <text class="tws" x="446" y="263" text-anchor="middle">NP7 · ISFW</text>
+  <line class="hb" x1="384" y1="247" x2="404" y2="247"/>
+  <line class="hb" x1="384" y1="259" x2="404" y2="259"/>
+  <!-- core to DC full mesh -->
+  <line class="prod" x1="316" y1="203" x2="324" y2="234"/>
+  <line class="prod" x1="336" y1="203" x2="430" y2="234"/>
+  <line class="prod" x1="380" y1="203" x2="358" y2="234"/>
+  <line class="prod" x1="440" y1="203" x2="462" y2="234"/>
+
+  <rect class="zone" x="300" y="284" width="188" height="38" rx="6"/>
+  <text class="t" x="309" y="299">Serverske zone: web · app · db</text>
+  <text class="ts" x="309" y="313">east-west segmentacija (ISFW), VDI</text>
+  <line class="prod" x1="342" y1="272" x2="342" y2="284"/>
+  <line class="prod" x1="446" y1="272" x2="446" y2="284"/>
+
+  <rect class="box" x="506" y="234" width="126" height="88" rx="6" fill="#ffffff"/>
+  <text class="t" x="514" y="250">Manje organizacije</text>
+  <text class="ts" x="514" y="264">DC/ISFW kao zaseban VDOM</text>
+  <text class="ts" x="514" y="276">na edge klasteru, uz</text>
+  <text class="ts" x="514" y="288">odvojene politike, rutiranje</text>
+  <text class="ts" x="514" y="300">i administratore</text>
+
+  <!-- OOB band -->
+  <g>
+    <rect class="box" x="96" y="352" width="84" height="44" rx="6"/>
+    <text class="t" x="138" y="369" text-anchor="middle">FortiManager</text>
+    <text class="ts" x="138" y="382" text-anchor="middle">politike · firmware</text>
+    <rect class="box" x="186.4" y="352" width="84" height="44" rx="6"/>
+    <text class="t" x="228.4" y="369" text-anchor="middle">FortiAnalyzer</text>
+    <text class="ts" x="228.4" y="382" text-anchor="middle">logovi · SOC</text>
+    <rect class="box" x="276.8" y="352" width="84" height="44" rx="6"/>
+    <text class="t" x="318.8" y="369" text-anchor="middle">FortiAuthenticator</text>
+    <text class="ts" x="318.8" y="382" text-anchor="middle">MFA · SAML · RADIUS</text>
+    <rect class="box" x="367.2" y="352" width="84" height="44" rx="6"/>
+    <text class="t" x="409.2" y="369" text-anchor="middle">FortiClient EMS</text>
+    <text class="ts" x="409.2" y="382" text-anchor="middle">ZTNA · posture</text>
+    <rect class="box" x="457.6" y="352" width="84" height="44" rx="6"/>
+    <text class="t" x="499.6" y="369" text-anchor="middle">Jump host / PAM</text>
+    <text class="ts" x="499.6" y="382" text-anchor="middle">admin pristup</text>
+    <rect class="box" x="548" y="352" width="84" height="44" rx="6"/>
+    <text class="t" x="590" y="369" text-anchor="middle">Konzolni server</text>
+    <text class="ts" x="590" y="382" text-anchor="middle">serijski pristup</text>
+  </g>
+  <text class="ts" x="96" y="409">MGMT portovi svih FortiGate uređaja vezani su isključivo u ovu mrežu (bez rute ka internetu).</text>
+</svg>

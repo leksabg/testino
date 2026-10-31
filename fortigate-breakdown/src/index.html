@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="sr-Latn">
+<head>
+<meta charset="utf-8">
+<title>Fortinet FortiGate u enterprise okruženju — pregled (oktobar 2026)</title>
+<style>
+/* Inter (SIL OFL 1.1) as static TrueType: embeds as real fonts in the PDF instead of Type 3 */
+@font-face { font-family: "Inter"; src: url("../fonts/Inter-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; }
+@font-face { font-family: "Inter"; src: url("../fonts/Inter-Italic.ttf") format("truetype"); font-weight: 400; font-style: italic; }
+@font-face { font-family: "Inter"; src: url("../fonts/Inter-Medium.ttf") format("truetype"); font-weight: 500; font-style: normal; }
+@font-face { font-family: "Inter"; src: url("../fonts/Inter-SemiBold.ttf") format("truetype"); font-weight: 600; font-style: normal; }
+@font-face { font-family: "Inter"; src: url("../fonts/Inter-Bold.ttf") format("truetype"); font-weight: 700; font-style: normal; }
+@font-face { font-family: "Inter Display"; src: url("../fonts/InterDisplay-Bold.ttf") format("truetype"); font-weight: 700; font-style: normal; }
+@page {
+  size: A4;
+  margin: 15mm 15mm 16mm 15mm;
+  @bottom-left {
+    content: "Fortinet FortiGate u enterprise okruženju  ·  oktobar 2026";
+    font: 500 7.2pt "Inter", sans-serif; color: #8a93a3; vertical-align: top; padding-top: 4mm;
+  }
+  @bottom-right {
+    content: counter(page) " / " counter(pages);
+    font: 600 7.2pt "Inter", sans-serif; color: #8a93a3; vertical-align: top; padding-top: 4mm;
+  }
+}
+@page cover {
+  margin: 0;
+  @bottom-left { content: none; }
+  @bottom-right { content: none; }
+}
+
+:root {
+  --navy: #0b1f3a;
+  --navy-2: #12305a;
+  --ink: #0f172a;
+  --body: #263042;
+  --muted: #5d6778;
+  --faint: #8a93a3;
+  --line: #e2e6ec;
+  --panel: #f4f6f9;
+  --accent: #2a78d6;
+  --accent-d: #1c5cab;
+  --accent-l: #eaf2fc;
+  --s2: #eb6834;
+  --s3: #1baf7a;
+  --crit: #d03b3b;
+  --serious: #ec835a;
+  --warn: #fab219;
+  --good: #0ca30c;
+}
+* { box-sizing: border-box; }
+html {
+  font-family: "Inter", "DejaVu Sans", sans-serif;
+  font-size: 8.6pt;
+  line-height: 1.42;
+  color: var(--body);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  font-feature-settings: "cv05" 1, "cv08" 1;
+}
+body { margin: 0; }
+p { margin: 0 0 1.8mm; }
+b, strong { color: var(--ink); font-weight: 600; }
+code, .mono { font-family: "JetBrains Mono", monospace; font-size: 0.9em; background: #eef1f5; padding: 0.1mm 1mm; border-radius: 0.8mm; color: #1d2a3f; }
+a { color: var(--accent-d); text-decoration: none; }
+
+/* ---------- cover ---------- */
+.cover { page: cover; height: 297mm; position: relative; overflow: hidden; background: #fff; }
+.cover-top {
+  height: 121mm; position: relative; color: #fff; padding: 22mm 18mm 0 18mm;
+  background: linear-gradient(135deg, #0b1f3a 0%, #0f2a52 55%, #163a6e 100%);
+}
+.cover-art { position: absolute; right: 0; top: 0; width: 125mm; height: 121mm; }
+.kicker { font: 600 7.6pt "Inter"; letter-spacing: 0.16em; color: #8fb6ea; text-transform: uppercase; }
+.cover h1 { font: 700 30pt/1.08 "Inter Display", "Inter"; letter-spacing: -0.015em; margin: 5mm 0 4.5mm; color: #fff; max-width: 140mm; }
+.cover .subtitle { font: 400 11.5pt/1.4 "Inter"; color: #c9d6ea; max-width: 120mm; margin: 0; }
+.cover .meta { position: absolute; left: 18mm; bottom: 11mm; display: flex; gap: 2.5mm; flex-wrap: wrap; max-width: 175mm; }
+.chip { font: 500 7.4pt "Inter"; padding: 1.1mm 2.6mm; border-radius: 10mm; border: 1px solid rgba(255,255,255,0.22); color: #dbe6f5; background: rgba(255,255,255,0.06); }
+.cover-bottom { padding: 9mm 18mm 0 18mm; }
+.cover-bottom h3 { margin: 0 0 4mm; }
+.takeaways { display: grid; grid-template-columns: 1fr 1fr; gap: 3.6mm 5mm; }
+.tk { display: grid; grid-template-columns: 8mm 1fr; gap: 0 2.5mm; padding: 3.2mm 3.6mm 3mm; border: 1px solid var(--line); border-radius: 2.5mm; background: #fff; }
+.tk .n { width: 7mm; height: 7mm; border-radius: 50%; background: var(--accent-l); color: var(--accent-d); font: 700 8.4pt "Inter"; display: flex; align-items: center; justify-content: center; }
+.tk .h5 { margin: 0.6mm 0 1mm; font: 650 9.2pt "Inter"; color: var(--ink); }
+.tk p { margin: 0; font-size: 8.3pt; color: var(--body); line-height: 1.42; }
+.toc { margin-top: 6mm; display: grid; grid-template-columns: repeat(7, 1fr); gap: 2mm; border-top: 1px solid var(--line); padding-top: 4mm; }
+.toc div { font-size: 7.4pt; color: var(--muted); line-height: 1.3; }
+.toc b { display: block; font: 700 10pt "Inter Display", "Inter"; color: var(--accent-d); margin-bottom: 0.6mm; }
+.toc .pg { color: var(--faint); font-size: 7pt; }
+.disclaimer { position: absolute; left: 18mm; right: 18mm; bottom: 9mm; font-size: 7pt; color: var(--faint); border-top: 1px solid var(--line); padding-top: 2.5mm; }
+
+/* ---------- sections ---------- */
+.sec { break-before: auto; margin-top: 9mm; }
+#s1 { margin-top: 0; }
+.sec.newpage { break-before: page; margin-top: 0; }
+.sec-h { display: grid; grid-template-columns: 17mm 1fr; align-items: start; border-bottom: 1px solid var(--line); padding-bottom: 2.8mm; margin-bottom: 3.6mm; break-after: avoid; break-inside: avoid; }
+.sec-num { font: 700 25pt/1 "Inter Display", "Inter"; color: var(--accent); letter-spacing: -0.02em; }
+.sec-kicker { font: 600 6.8pt "Inter"; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); margin-bottom: 0.8mm; }
+h2 { font: 700 17pt/1.15 "Inter Display", "Inter"; color: var(--ink); margin: 0 0 1.6mm; letter-spacing: -0.012em; }
+.lede { color: var(--muted); font-size: 9pt; line-height: 1.42; margin: 0; max-width: 158mm; }
+h3 { font: 650 10.6pt "Inter"; color: var(--ink); margin: 4.4mm 0 2mm; break-after: avoid; letter-spacing: -0.005em; }
+h3:first-child { margin-top: 0; }
+.h4 { font: 700 7.3pt "Inter"; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-d); margin: 0 0 2mm; break-after: avoid; }
+.small { font-size: 7.8pt; color: var(--muted); }
+.caption { font-size: 7.4pt; color: var(--muted); margin-top: 1.8mm; line-height: 1.4; }
+
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+.g2-wide { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 5mm; }
+.g3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; }
+.g4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3.2mm; }
+.card { border: 1px solid var(--line); border-radius: 2.5mm; padding: 3.4mm 3.8mm; background: #fff; break-inside: avoid; }
+.card.panel { background: var(--panel); border-color: var(--panel); }
+.card p:last-child, .card ul:last-child, .card ol:last-child { margin-bottom: 0; }
+.avoid { break-inside: avoid; }
+.pb { break-before: page; margin-top: 0 !important; }
+.cols2 { columns: 2; column-gap: 7mm; }
+.cols2 li { break-inside: avoid; }
+.mt { margin-top: 3.8mm; }
+.mt-s { margin-top: 3mm; }
+
+ul.l, ol.l { margin: 0 0 2mm; padding-left: 4.2mm; }
+ul.l li, ol.l li { margin: 0 0 1mm; padding-left: 0.6mm; }
+ul.l li::marker { color: var(--accent); }
+ol.l li::marker { color: var(--accent-d); font-weight: 700; }
+
+.callout { border-left: 2.6px solid var(--accent); background: var(--accent-l); padding: 2.8mm 3.8mm; border-radius: 0 2mm 2mm 0; break-inside: avoid; font-size: 8.5pt; }
+.callout.warn { border-left-color: var(--crit); background: #fdf1f0; }
+.callout.now { border-left-color: var(--warn); background: #fff7e3; }
+.callout .ttl { font: 700 7.3pt "Inter"; letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 1mm; color: var(--accent-d); }
+.callout.warn .ttl { color: #a52a2a; }
+.callout.now .ttl { color: #8a5a00; }
+.callout p:last-child { margin-bottom: 0; }
+
+/* tiles */
+.tile { border: 1px solid var(--line); border-radius: 2.5mm; padding: 3mm 3.4mm 2.8mm; background: #fff; }
+.tile .lbl { font-size: 7.6pt; color: var(--muted); }
+.tile .val { font: 650 19pt/1.1 "Inter Display", "Inter"; color: var(--ink); margin: 1.2mm 0 0.8mm; letter-spacing: -0.01em; }
+.tile .sub { font-size: 7.3pt; color: var(--muted); line-height: 1.35; }
+
+/* tables */
+table { width: 100%; border-collapse: collapse; font-size: 7.9pt; line-height: 1.36; }
+th { text-align: left; font-weight: 650; color: var(--ink); background: var(--panel); padding: 1.5mm 2.2mm; border-bottom: 1px solid #d6dce4; font-size: 7.6pt; }
+td { padding: 1.35mm 2.2mm; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr { break-inside: avoid; }
+table.tight td { padding-top: 1.1mm; padding-bottom: 1.1mm; }
+td b { font-weight: 650; }
+.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.nowrap { white-space: nowrap; }
+
+/* code */
+pre.code {
+  background: #0e1a2e; color: #d9e3f2; font: 7pt/1.48 "JetBrains Mono", monospace;
+  padding: 3mm 3.6mm; border-radius: 2mm; white-space: pre; margin: 0; break-inside: avoid; overflow: hidden;
+}
+pre.code .k { color: #7fb8ff; }
+pre.code .c { color: #7d8fae; }
+.code-ttl { font: 600 7.3pt "Inter"; color: var(--muted); margin: 0 0 1.4mm; }
+
+/* figure */
+.figure { border: 1px solid var(--line); border-radius: 2.5mm; padding: 3mm; break-inside: avoid; }
+.legend { display: flex; gap: 5mm; flex-wrap: wrap; font-size: 7.3pt; color: var(--muted); margin-top: 2mm; align-items: center; }
+.legend span { display: inline-flex; align-items: center; gap: 1.6mm; }
+.legend svg { flex: none; }
+
+/* zone matrix */
+.zm th, .zm td { text-align: center; padding: 1.05mm 1mm; }
+.zm th:first-child, .zm td:first-child { text-align: left; padding-left: 2.2mm; }
+.zm td:first-child { font-weight: 650; color: var(--ink); font-size: 7.7pt; white-space: nowrap; }
+.z { display: inline-block; padding: 0.35mm 1.5mm; border-radius: 1.2mm; font-size: 6.9pt; font-weight: 600; white-space: nowrap; }
+.z.ok { background: #e3eefb; color: #164c8c; }
+.z.lim { background: #fff1cc; color: #6f4b00; }
+.z.no { background: #eef0f3; color: #6b7482; font-weight: 500; }
+.z.na { background: transparent; color: #b4bac4; font-weight: 400; }
+
+/* inspection matrix */
+.im td, .im th { text-align: center; }
+.im th:first-child, .im td:first-child { text-align: left; }
+.im td:first-child { font-weight: 650; color: var(--ink); white-space: nowrap; }
+.dot { display: inline-block; width: 2.6mm; height: 2.6mm; border-radius: 50%; vertical-align: -0.3mm; }
+.dot.full { background: var(--accent); }
+.dot.half { background: linear-gradient(90deg, var(--accent) 50%, #cfe0f5 50%); }
+.dot.none { width: 2.6mm; height: 0.5mm; border-radius: 0.3mm; background: #c3c9d2; vertical-align: 0.4mm; }
+.im .note { display: block; font-size: 6.6pt; color: var(--muted); font-weight: 400; margin-top: 0.4mm; }
+
+/* segmented bar */
+.segbar { display: flex; gap: 2px; height: 28px; margin: 1.5mm 0 2mm; }
+.segbar div { border-radius: 4px; color: #fff; font: 650 8.4pt "Inter"; display: flex; align-items: center; padding-left: 2.4mm; }
+
+/* timeline */
+.tl { margin: 0; }
+.tl-item { display: grid; grid-template-columns: 21mm 1fr; gap: 0 3.2mm; break-inside: avoid; }
+.tl-date { font: 650 7.6pt/1.35 "Inter"; color: var(--accent-d); text-align: right; padding-top: 0.2mm; font-variant-numeric: tabular-nums; }
+.tl-body { position: relative; border-left: 1.4px solid #d5dbe4; padding: 0 0 1.9mm 3.6mm; font-size: 7.95pt; line-height: 1.4; }
+.tl-body::before { content: ""; position: absolute; left: -1.7mm; top: 1mm; width: 2.2mm; height: 2.2mm; border-radius: 50%; background: #fff; border: 1.4px solid var(--accent); }
+.tl-item.crit .tl-body::before { background: var(--accent); }
+.tl-item:last-child .tl-body { padding-bottom: 0; }
+
+/* process flow */
+.flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4.2mm 5mm; }
+.step { position: relative; background: var(--panel); border-radius: 2.5mm; padding: 3mm 3.2mm 3mm; break-inside: avoid; }
+.step .n { width: 6mm; height: 6mm; border-radius: 50%; background: var(--navy); color: #fff; font: 700 7.8pt "Inter"; display: flex; align-items: center; justify-content: center; margin-bottom: 1.6mm; }
+.step .h5 { margin: 0 0 1mm; font: 650 8.8pt "Inter"; color: var(--ink); }
+.step p { margin: 0; font-size: 7.5pt; line-height: 1.36; color: var(--body); }
+.step:not(:nth-child(4n))::after { content: ""; position: absolute; right: -3.9mm; top: 5.2mm; width: 0; height: 0; border-top: 1.4mm solid transparent; border-bottom: 1.4mm solid transparent; border-left: 2mm solid #b8c2d0; }
+
+/* priority badges */
+.pri { display: inline-flex; align-items: center; gap: 1.4mm; font-weight: 700; white-space: nowrap; color: var(--ink); }
+.pri i { display: inline-block; width: 2.4mm; height: 2.4mm; border-radius: 0.6mm; }
+.pri.p0 i { background: var(--crit); }
+.pri.p1 i { background: var(--serious); }
+.pri.p2 i { background: var(--warn); }
+.pri.p3 i { background: #9aa3b0; }
+.pri.pm i { background: var(--accent); }
+
+/* fabric map */
+.fab { display: grid; grid-template-columns: 27mm 1fr; gap: 1.6mm 2.5mm; align-items: baseline; font-size: 8pt; }
+.fab .k { font: 650 7.4pt "Inter"; color: var(--muted); }
+.fab .v span { display: inline-block; background: var(--panel); border-radius: 1.2mm; padding: 0.4mm 1.6mm; margin: 0 1mm 1mm 0; color: var(--ink); font-weight: 500; font-size: 7.6pt; }
+.fab .v span.hl { background: var(--navy); color: #fff; }
+
+/* checklist */
+.chk { columns: 2; column-gap: 7mm; }
+.chk .grp { break-inside: avoid; margin-bottom: 3mm; }
+.chk .h4 { margin-bottom: 1.4mm; }
+.chk ul { list-style: none; margin: 0; padding: 0; }
+.chk li { position: relative; padding-left: 5mm; margin-bottom: 1.15mm; font-size: 8.1pt; line-height: 1.38; }
+.chk li::before { content: ""; position: absolute; left: 0; top: 0.5mm; width: 2.8mm; height: 2.8mm; border: 1.2px solid #9aa6b6; border-radius: 0.7mm; }
+.src { font-size: 7.25pt; color: var(--muted); line-height: 1.38; margin: 0; padding-left: 4.4mm; }
+.src li { margin-bottom: 0.8mm; }
+.src b { color: var(--body); font-weight: 600; }
+.end-note { margin-top: 4mm; font-size: 7pt; color: var(--faint); border-top: 1px solid var(--line); padding-top: 2.4mm; }
+</style>
+</head>
+<body>
+
+<!-- =========================== COVER =========================== -->
+<section class="cover">
+  <div class="cover-top">
+    <svg class="cover-art" viewBox="0 0 500 484" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+      <g stroke="rgba(255,255,255,0.13)" stroke-width="1.2" fill="none">
+        <path d="M120 60 L230 30 L340 80 L450 40 M230 30 L260 150 L340 80 L420 170 L450 40 M120 60 L150 190 L260 150 L330 260 L420 170 L490 270 M150 190 L210 300 L330 260 L380 370 L490 270 M210 300 L270 410 L380 370 L470 440 M270 410 L160 440 M210 300 L90 330 L160 440 M90 330 L150 190 M330 260 L260 150 M450 40 L500 120 L420 170"/>
+      </g>
+      <g fill="rgba(255,255,255,0.32)">
+        <circle cx="120" cy="60" r="3"/><circle cx="230" cy="30" r="3"/><circle cx="340" cy="80" r="3.5"/><circle cx="450" cy="40" r="3"/>
+        <circle cx="150" cy="190" r="3"/><circle cx="420" cy="170" r="3"/><circle cx="210" cy="300" r="3"/>
+        <circle cx="490" cy="270" r="3"/><circle cx="380" cy="370" r="3"/><circle cx="270" cy="410" r="3"/><circle cx="160" cy="440" r="3"/><circle cx="90" cy="330" r="3"/><circle cx="470" cy="440" r="3"/><circle cx="500" cy="120" r="3"/>
+      </g>
+      <g fill="#4d9bf0"><circle cx="260" cy="150" r="6"/><circle cx="330" cy="260" r="6"/></g>
+      <g fill="none" stroke="#4d9bf0" stroke-width="1.2" opacity="0.55"><circle cx="260" cy="150" r="13"/><circle cx="330" cy="260" r="13"/></g>
+    </svg>
+    <div class="kicker">Tehnički pregled · stanje: 31. oktobar 2026</div>
+    <h1>Fortinet FortiGate&nbsp;<br>u enterprise okruženju</h1>
+    <p class="subtitle">Fizička i logička arhitektura, NGFW tehnologije, koliko je često meta napada i kako izgleda proces patchovanja.</p>
+    <div class="meta">
+      <span class="chip">FortiOS 7.4 · 7.6 · 8.0</span>
+      <span class="chip">HA · segmentacija · ZTNA · SD-WAN</span>
+      <span class="chip">CISA KEV · Fortinet PSIRT</span>
+      <span class="chip">Patch SLA i kontrolna lista</span>
+    </div>
+  </div>
+
+  <div class="cover-bottom">
+    <h3>Ukratko</h3>
+    <div class="takeaways">
+      <div class="tk"><div class="n">1</div><div><div class="h5">Najrasprostranjeniji — i među najnapadanijima</div>
+        <p>Fortinet navodi ≈55&nbsp;% svetskih isporuka firewall uređaja. U CISA KEV katalogu ima 32 aktivno eksploatisane ranjivosti, od toga 21 u FortiOS-u. Godina 2026. je rekordna: 9 novih unosa do kraja oktobra.</p></div></div>
+      <div class="tk"><div class="n">2</div><div><div class="h5">Napadaju se interfejsi izloženi internetu</div>
+        <p>14 od 21 FortiOS ranjivosti iz KEV-a pogađa SSL-VPN ili management ravan (admin GUI, FGFM, CAPWAP, FortiCloud SSO). Dobra arhitektura uklanja te površine sa interneta.</p></div></div>
+      <div class="tk"><div class="n">3</div><div><div class="h5">Fizički: dva HA sloja i OOB</div>
+        <p>FGCP active-passive klaster na Internet edge-u i zaseban za DC/ISFW, dva heartbeat linka, LACP ka paru core switch-eva i izolovana OOB management mreža. Kapacitet se računa po Threat Protection i SSL brojkama.</p></div></div>
+      <div class="tk"><div class="n">4</div><div><div class="h5">Logički: segmentacija i identitet</div>
+        <p>Zone, default deny i politike po korisnicima i grupama; ISFW između korisnika, servera i OT-a; IPsec IKEv2 ili ZTNA sa MFA umesto SSL-VPN-a; centralno FortiManager i FortiAnalyzer.</p></div></div>
+      <div class="tk"><div class="n">5</div><div><div class="h5">NGFW: slojevi na granicama poverenja</div>
+        <p>IPS, Application Control, antimalver, web/DNS filter i SSL deep inspection kao osnova. Na edge-u još inline sandbox, DLP i CASB (FortiGuard Enterprise paket).</p></div></div>
+      <div class="tk"><div class="n">6</div><div><div class="h5">Patch: dve brzine</div>
+        <p>Mesečni PSIRT ciklus (drugi utorak) i vanredne zakrpe. Za aktivno eksploatisano i izloženo: mitigacija ≤&nbsp;24&nbsp;h, zakrpa ≤&nbsp;72&nbsp;h, zatim provera kompromitacije. Trenutni minimum: 7.4.13 / 7.6.8 / 8.0.2.</p></div></div>
+    </div>
+    <div class="toc">
+      <div><b>01</b>Fortinet ukratko<br><span class="pg" data-toc="s1"></span></div>
+      <div><b>02</b>Fizički dizajn<br><span class="pg" data-toc="s2"></span></div>
+      <div><b>03</b>Logički dizajn<br><span class="pg" data-toc="s3"></span></div>
+      <div><b>04</b>NGFW tehnologije<br><span class="pg" data-toc="s4"></span></div>
+      <div><b>05</b>Koliko je često meta<br><span class="pg" data-toc="s5"></span></div>
+      <div><b>06</b>Patch proces<br><span class="pg" data-toc="s6"></span></div>
+      <div><b>07</b>Referentni setup i kontrolna lista<br><span class="pg" data-toc="s7"></span></div>
+    </div>
+  </div>
+  <p class="disclaimer">Nezavisan tehnički pregled zasnovan na javno dostupnim izvorima (Fortinet dokumentacija i PSIRT, CISA KEV, izveštaji istraživača); nije zvaničan Fortinet materijal. Pre izmena u produkciji proverite aktuelne release notes, PSIRT advisory-je i datasheet-ove.</p>
+</section>
+
+<!-- =========================== 01 =========================== -->
+<section class="sec" id="s1">
+  <header class="sec-h">
+    <div class="sec-num">01</div>
+    <div>
+      <div class="sec-kicker">Sekcija 01 · Kontekst</div>
+      <h2>Fortinet ukratko</h2>
+      <p class="lede">Fortinet (osnovan 2000, sedište Sunnyvale, Kalifornija) gradi celu platformu oko jednog operativnog sistema — FortiOS — i sopstvenih ASIC čipova. FortiGate je centar te platforme, koju Fortinet zove Security Fabric.</p>
+    </div>
+  </header>
+
+  <div class="g4">
+    <div class="tile"><div class="lbl">Prihod 2025</div><div class="val">6,80 mlrd $</div><div class="sub">+14&nbsp;% u odnosu na 2024; plan za 2026: 7,5–7,7 mlrd $</div></div>
+    <div class="tile"><div class="lbl">Udeo u isporukama</div><div class="val">≈55&nbsp;%</div><div class="sub">firewall uređaja po broju jedinica (podatak Fortineta)</div></div>
+    <div class="tile"><div class="lbl">Gartner MQ 2025</div><div class="val">Leader</div><div class="sub">Hybrid Mesh Firewall (prvo izdanje) i SASE platforme</div></div>
+    <div class="tile"><div class="lbl">Grane FortiOS-a</div><div class="val">7.4 · 7.6 · 8.0</div><div class="sub">8.0 je GA od aprila 2026; 7.2 je van podrške</div></div>
+  </div>
+
+  <div class="g2 mt">
+    <div>
+      <h3>Šta je FortiGate</h3>
+      <p>Next-generation firewall koji u jednom uređaju i jednom OS-u objedinjuje stateful firewall, IPS, kontrolu aplikacija, web i DNS filtriranje, antimalver, VPN i ZTNA, SD-WAN, kao i kontroler za FortiSwitch i FortiAP (FortiLink). Isti FortiOS radi od filijalskog 50G do šasija serije 7000 i virtuelnih instanci u AWS-u, Azure-u i GCP-u, pa se politike, alati i znanje prenose kroz celu mrežu.</p>
+      <div class="h4 mt-s">Hardversko ubrzanje (SPU)</div>
+      <ul class="l">
+        <li><b>NP7</b> (Network Processor) — offload firewall sesija, NAT-a, IPsec-a i VXLAN-a; osnova DC i velikih edge modela.</li>
+        <li><b>CP</b> (Content Processor, npr. CP9) — ubrzava IPS/antivirus pretragu obrazaca i TLS kriptografiju.</li>
+        <li><b>SP5</b> (SoC u G-seriji) — spaja mrežne i sadržajne funkcije za kampus i filijale (npr. 50G, 70G, 90G).</li>
+      </ul>
+      <p class="small">Posledica za dizajn: performanse zavise od toga da li saobraćaj ide kroz ASIC. Proxy inspekcija i deo funkcija rade na CPU-u, zato se kapacitet uvek proverava sa uključenim profilima.</p>
+    </div>
+    <div>
+      <h3>Security Fabric oko FortiGate-a</h3>
+      <div class="fab">
+        <div class="k">Mreža</div><div class="v"><span class="hl">FortiGate</span><span>FortiSwitch</span><span>FortiAP</span><span>FortiExtender (LTE/5G)</span><span>FortiNAC</span></div>
+        <div class="k">Identitet i pristup</div><div class="v"><span>FortiAuthenticator</span><span>FortiToken</span><span>FortiClient + EMS</span><span>FortiPAM</span></div>
+        <div class="k">Upravljanje i SOC</div><div class="v"><span>FortiManager</span><span>FortiAnalyzer</span><span>FortiSIEM</span><span>FortiSOAR</span><span>FortiEDR</span></div>
+        <div class="k">Aplikacije i sadržaj</div><div class="v"><span>FortiWeb (WAF)</span><span>FortiMail</span><span>FortiSandbox</span><span>FortiDLP</span></div>
+        <div class="k">Cloud i SASE</div><div class="v"><span>FortiGate-VM</span><span>FortiSASE</span><span>FortiCNAPP</span></div>
+      </div>
+      <div class="callout mt-s">
+        <span class="ttl">FortiOS 8.0 — šta je novo (GA april 2026)</span>
+        <ul class="l" style="margin-bottom:1mm">
+          <li>Vidljivost i kontrola upotrebe AI alata (shadow AI, AI-aware kontrola aplikacija).</li>
+          <li>Post-kvantna kriptografija: hibridna razmena ključeva u SSL deep inspection-u, PQC sertifikati (ML-DSA) za admin pristup i agentless VPN.</li>
+          <li>Multipath IPsec tuneli, objedinjeni SD-WAN paketi, SASE Outpost i suvereni SASE.</li>
+        </ul>
+        <p class="small" style="margin:0">Za produkciju ostaju zrele grane 7.4 / 7.6 dok 8.0 ne postane „Recommended Release” za vaš model.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Licenciranje: FortiGuard paketi</h3>
+  <table>
+    <thead><tr><th style="width:24%">Paket</th><th>Sadrži</th><th style="width:26%">Gde ima smisla</th></tr></thead>
+    <tbody>
+      <tr><td><b>ATP</b> — Advanced Threat Protection</td><td>IPS, antimalver (AV, botnet), Application Control, FortiCare Premium</td><td>DC / ISFW, interni segmenti</td></tr>
+      <tr><td><b>UTP</b> — Unified Threat Protection</td><td>ATP + URL, DNS i video filtriranje, antispam</td><td>filijale, manji edge</td></tr>
+      <tr><td><b>Enterprise Protection</b></td><td>UTP + AI-based inline malware prevention (inline sandbox), DLP, inline CASB, Attack Surface Security</td><td>Internet edge, kampus</td></tr>
+    </tbody>
+  </table>
+  <p class="caption">Bez važeće FortiGuard pretplate nema novih potpisa — IPS, antivirus i web filter brzo gube vrednost. Planirajte obnovu licenci zajedno sa hardverskim ciklusom.</p>
+</section>
+
+<!-- =========================== 02 =========================== -->
+<section class="sec" id="s2">
+  <header class="sec-h">
+    <div class="sec-num">02</div>
+    <div>
+      <div class="sec-kicker">Sekcija 02 · Arhitektura</div>
+      <h2>Fizički dizajn</h2>
+      <p class="lede">Cilj: nijedna pojedinačna komponenta — uređaj, link, switch, napajanje ili ISP — ne sme da prekine saobraćaj, a upravljanje mora da radi i kada produkciona mreža ne radi.</p>
+    </div>
+  </header>
+
+  <div class="figure">
+    <!--INCLUDE:diagram_topology.svg-->
+    <div class="legend">
+      <span><svg width="22" height="6"><line x1="0" y1="3" x2="22" y2="3" stroke="#6b7482" stroke-width="1.4"/></svg>produkcioni link</span>
+      <span><svg width="22" height="6"><line x1="0" y1="3" x2="22" y2="3" stroke="#2a78d6" stroke-width="1.6" stroke-dasharray="5 3"/></svg>IPsec / ZTNA overlay</span>
+      <span><svg width="22" height="8"><line x1="0" y1="2" x2="22" y2="2" stroke="#eb6834" stroke-width="1.5"/><line x1="0" y1="6" x2="22" y2="6" stroke="#eb6834" stroke-width="1.5"/></svg>HA heartbeat (2 linka)</span>
+      <span><svg width="12" height="10"><rect x="0" y="0" width="12" height="10" rx="2" fill="#0b1f3a"/></svg>FortiGate</span>
+    </div>
+  </div>
+  <p class="caption">Slika 1. Referentna topologija: odvojeni HA klasteri za Internet edge i DC/ISFW, dual-homing ka core paru i izolovana OOB management mreža.</p>
+
+  <div class="g2 mt">
+    <div>
+      <div class="h4">Visoka dostupnost (HA)</div>
+      <ul class="l">
+        <li><b>FGCP active-passive</b> par istog modela, firmvera i licenci na svakom kritičnom sloju. Active-active deli samo sesije sa security profilima i retko vredi dodatne složenosti.</li>
+        <li><b>Dva heartbeat linka</b>, direktno kablirana, na različitim portovima (namenski HA1/HA2 gde postoje) — nikad preko istog switch-a kao produkcija.</li>
+        <li><b>Session pickup</b> (uključujući UDP/ICMP), <i>monitor</i> interfejsi i <i>link-monitor</i> ka ISP gateway-ima, da bi failover reagovao i na pad upstream-a.</li>
+        <li><b>Reserved HA management</b> interfejs: svakom članu se pristupa zasebno (monitoring, upgrade, troubleshooting).</li>
+      </ul>
+    </div>
+    <div>
+      <div class="h4">Kablovi, napajanje, upravljanje</div>
+      <ul class="l">
+        <li>Svaki FortiGate je <b>dual-homed (LACP)</b> ka paru core switch-eva (MCLAG/vPC) — pad switch-a ne izaziva failover firewall-a.</li>
+        <li><b>Dva napajanja</b> na odvojene PDU/UPS grane; članovi klastera u različitim rack-ovima ili salama.</li>
+        <li><b>OOB management</b>: MGMT portovi u izolovanu mrežu + konzolni server za serijski pristup kada ništa drugo ne radi.</li>
+        <li><b>Odvojeni slojevi</b>: Internet edge i DC/ISFW su posebni klasteri (ili bar posebni VDOM-ovi) — greška ili kompromitacija edge-a ne otvara DC.</li>
+        <li><b>Podrška</b>: FortiCare Premium/Elite (24×7, RMA) i hladna rezerva za filijale.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout warn mt-s">
+    <span class="ttl">Česta greška</span>
+    <p>Heartbeat linkovi kroz jedan switch bez redundanse: kada on padne, nastaje <b>split-brain</b> — oba člana postaju primarni, sa istim IP i MAC adresama, i mreža staje.</p>
+  </div>
+
+  <h3 class="pb">Dimenzionisanje i izbor modela</h3>
+  <table>
+    <thead><tr><th style="width:20%">Uloga</th><th style="width:28%">Tipični modeli*</th><th>Ključni zahtevi</th><th style="width:11%">FortiGuard</th></tr></thead>
+    <tbody>
+      <tr><td><b>Filijala / SD-WAN</b></td><td>50G, 70G, 90G (ranije 40F, 60F)</td><td>SD-WAN + ADVPN, LTE/5G rezerva, FortiLink</td><td>UTP</td></tr>
+      <tr><td><b>Kampus / srednji edge</b></td><td>120G, 200F, 400G, 600F</td><td>deep inspection, ZTNA/VPN, Wi-Fi kontroler</td><td>Enterprise</td></tr>
+      <tr><td><b>Internet edge</b></td><td>900G, 1000F, 1800F, 2600F</td><td>dual ISP, DMZ, SSL inspekcija, VPN/SD-WAN hub</td><td>Enterprise</td></tr>
+      <tr><td><b>DC / ISFW / core</b></td><td>3500G, 3700F, 4200F, 4800F</td><td>NP7, 100G+, east-west IPS, VXLAN, visok CPS</td><td>ATP</td></tr>
+      <tr><td><b>Cloud</b></td><td>FortiGate-VM (AWS, Azure, GCP…)</td><td>HA preko cloud LB-a, SDN konektori, autoscale</td><td>po potrebi</td></tr>
+    </tbody>
+  </table>
+  <p class="caption">* Orijentaciono. Konačan izbor po zvaničnom datasheet-u i POC testu sa realnim saobraćajem.</p>
+
+  <div class="g2 mt">
+    <div>
+      <div class="h4">Pravila dimenzionisanja</div>
+      <ol class="l">
+        <li>Računajte po <b>Threat Protection</b> i <b>SSL Inspection</b> throughput-u, ne po „Firewall throughput”-u: sa uključenim IPS + AppCtrl + AV i dešifrovanjem kapacitet je često više od 10× manji.</li>
+        <li>Ciljajte <b>≤&nbsp;50–60&nbsp;% opterećenja</b> u špicu posle 3–5 godina rasta.</li>
+        <li>Proverite i broj sesija, nove sesije/s, IPsec tunele, broj VPN/ZTNA korisnika i log rate ka FortiAnalyzer-u.</li>
+        <li>Jedan član HA para mora sam da nosi ceo saobraćaj — active-active nije zamena za dimenzionisanje.</li>
+        <li>POC sa realnim saobraćajem i uključenim profilima pre kupovine.</li>
+      </ol>
+      <p class="small">Provera klastera: <code>get system ha status</code> i <code>diagnose sys ha checksum cluster</code> (checksum-ovi članova moraju biti isti).</p>
+    </div>
+    <div>
+      <div class="code-ttl">HA osnova — primer konfiguracije (FGCP A-P)</div>
+<pre class="code">config system ha
+    set group-name "EDGE-HA"
+    set group-id 10
+    set mode a-p
+    set password &lt;tajna&gt;
+    set hbdev "ha1" 100 "ha2" 50
+    set session-pickup enable
+    set session-pickup-connectionless enable
+    set override disable
+    set priority 200          # 100 na sekundarnom
+    set monitor "x1" "x2"     # LACP ka core-u
+    set ha-mgmt-status enable
+    config ha-mgmt-interfaces
+        edit 1
+            set interface "mgmt"
+            set gateway 10.99.0.1
+        next
+    end
+end</pre>
+    </div>
+  </div>
+</section>
+
+<!-- =========================== 03 =========================== -->
+<section class="sec" id="s3">
+  <header class="sec-h">
+    <div class="sec-num">03</div>
+    <div>
+      <div class="sec-kicker">Sekcija 03 · Arhitektura</div>
+      <h2>Logički dizajn</h2>
+      <p class="lede">Fizička redundansa ne pomaže ako je mreža logički „ravna”. Cilj je da kompromitacija jednog segmenta ostane u tom segmentu, a da administracija uređaja bude nedostupna napadaču.</p>
+    </div>
+  </header>
+
+  <h3>Zone i dozvoljeni tokovi — primer matrice</h3>
+  <table class="zm">
+    <thead><tr><th style="width:17%">Izvor ↓ / Odredište →</th><th>Internet</th><th>DMZ</th><th>DC / serveri</th><th>Korisnici</th><th>MGMT</th></tr></thead>
+    <tbody>
+      <tr><td>Korisnici</td><td><span class="z ok">✓ pun NGFW</span></td><td><span class="z lim">◐ HTTPS</span></td><td><span class="z lim">◐ po aplikaciji</span></td><td><span class="z no">✕ intrazone</span></td><td><span class="z no">✕</span></td></tr>
+      <tr><td>Gosti</td><td><span class="z ok">✓ web / DNS</span></td><td><span class="z no">✕</span></td><td><span class="z no">✕</span></td><td><span class="z no">✕</span></td><td><span class="z no">✕</span></td></tr>
+      <tr><td>IoT / OT</td><td><span class="z lim">◐ allow-list</span></td><td><span class="z no">✕</span></td><td><span class="z lim">◐ OT IPS</span></td><td><span class="z no">✕</span></td><td><span class="z no">✕</span></td></tr>
+      <tr><td>VPN / ZTNA</td><td><span class="z lim">◐ po politici</span></td><td><span class="z lim">◐</span></td><td><span class="z lim">◐ po grupi</span></td><td><span class="z no">✕</span></td><td><span class="z no">✕</span></td></tr>
+      <tr><td>DMZ</td><td><span class="z lim">◐ update</span></td><td><span class="z no">✕ intrazone</span></td><td><span class="z lim">◐ app → db</span></td><td><span class="z no">✕</span></td><td><span class="z no">✕</span></td></tr>
+      <tr><td>DC / serveri</td><td><span class="z lim">◐ preko proxy-ja</span></td><td><span class="z lim">◐</span></td><td><span class="z lim">◐ east-west IPS</span></td><td><span class="z no">✕</span></td><td><span class="z no">✕</span></td></tr>
+      <tr><td>Internet</td><td><span class="z na">—</span></td><td><span class="z lim">◐ samo objavljeni</span></td><td><span class="z no">✕</span></td><td><span class="z no">✕</span></td><td><span class="z no">✕</span></td></tr>
+      <tr><td>MGMT (jump / PAM)</td><td><span class="z lim">◐ update</span></td><td><span class="z lim">◐ admin</span></td><td><span class="z lim">◐ admin</span></td><td><span class="z lim">◐ admin</span></td><td><span class="z na">—</span></td></tr>
+    </tbody>
+  </table>
+  <div class="legend">
+    <span><span class="z ok">✓</span> dozvoljeno uz pun NGFW profil</span>
+    <span><span class="z lim">◐</span> samo navedeni servisi, aplikacije ili grupe</span>
+    <span><span class="z no">✕</span> default deny (logovano)</span>
+  </div>
+
+  <div class="g2 pb">
+    <div>
+      <div class="h4">Principi za politike</div>
+      <ol class="l">
+        <li><b>Default deny</b>: poslednje pravilo je eksplicitni <i>deny all</i> sa logovanjem.</li>
+        <li><b>Least privilege</b>: konkretni izvori, odredišta i servisi; „all/ALL” samo ka internetu i uz pun NGFW profil.</li>
+        <li><b>Identitet umesto IP adresa</b>: grupe iz AD / Entra ID (FSSO, SAML) u politikama; stanje uređaja preko FortiClient EMS tagova.</li>
+        <li><b>ISDB objekti</b> (Internet Service Database) za SaaS kao što su M365 ili Zoom, umesto ručnih IP lista.</li>
+        <li><b>Dokumentacija</b>: konvencija naziva, komentar sa brojem tiketa i vlasnikom pravila.</li>
+        <li><b>Higijena</b>: kvartalni pregled <i>hit count / last used</i>, uklanjanje nekorišćenih i preklapajućih pravila.</li>
+        <li><b>Promene kroz FortiManager</b>: workflow sa odobravanjem, revizije i rollback.</li>
+      </ol>
+    </div>
+    <div>
+      <div class="h4">Gradivni blokovi FortiOS-a</div>
+      <ul class="l">
+        <li><b>Zone</b> grupišu interfejse/VLAN-ove istog nivoa poverenja (manje pravila); <code>set intrazone deny</code> sprečava lateralno kretanje unutar zone.</li>
+        <li><b>VDOM</b> je potpuno odvojen „virtuelni firewall” (politike, rutiranje, administratori), npr. INET, DC i OT; management VDOM služi samo za upravljanje.</li>
+        <li><b>VRF</b> daje odvojene tabele rutiranja unutar istog VDOM-a (gosti, partneri, preklapajući opsezi).</li>
+        <li><b>Profile-based ili NGFW policy-based mode</b>: profile-based je standard i najčešći izbor; policy-based kada želite pravila direktno po aplikacijama i URL kategorijama.</li>
+        <li><b>Central SNAT i VIP objekti</b> odvajaju NAT od bezbednosnih politika, što olakšava velike rulebase-ove.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Zaštita management ravni — najvažnija pojedinačna mera</h3>
+  <div class="callout warn">
+    <p>Većina masovnih kompromitacija FortiGate-a počinje od management interfejsa dostupnog sa interneta: CVE-2022-40684, CVE-2024-55591, FortiCloud SSO (2025/26) i kampanja sa 600+ uređaja iz 2026. koja nije koristila nijednu ranjivost, samo slabe lozinke.</p>
+  </div>
+  <div class="g2 mt-s">
+    <div>
+      <ul class="l">
+        <li>Admin HTTPS/SSH, FGFM (TCP 541) i CAPWAP (UDP 5246/5247) <b>nikad na WAN interfejsima</b>; pristup samo iz MGMT mreže ili jump hosta (<i>trusted hosts</i> + <i>local-in</i> politike).</li>
+        <li><b>MFA za sve admin naloge</b> (FortiToken, FortiAuthenticator ili SAML), RBAC profili, bez deljenih naloga; podrazumevani <code>admin</code> preimenovati ili onemogućiti.</li>
+        <li><b>FortiCloud SSO login isključiti</b> ako se ne koristi (CVE-2025-59718, CVE-2026-24858).</li>
+        <li><b>private-data-encryption</b> za tajne u konfiguraciji — CVE-2019-6693 (fiksni ključ za backup) je u KEV-u od 2025.</li>
+        <li>TLS 1.2/1.3, zaključavanje posle neuspelih prijava, SNMPv3, NTP, login banner; isključiti sve servise koji se ne koriste.</li>
+      </ul>
+    </div>
+    <div>
+<pre class="code">config system global
+    set admin-forticloud-sso-login disable
+    set private-data-encryption enable
+    set admin-lockout-threshold 3
+    set admin-lockout-duration 900
+    set admin-https-ssl-versions tlsv1-2 tlsv1-3
+    set strong-crypto enable
+end
+config system interface
+    edit "wan1"
+        set allowaccess ping    # bez https/ssh/fgfm
+    next
+end
+config system admin
+    edit "adm.petar.petrovic"
+        set trusthost1 10.99.0.0 255.255.255.0
+        set two-factor fortitoken
+    next
+end</pre>
+    </div>
+  </div>
+
+  <div class="g3 mt">
+    <div class="card panel">
+      <div class="h4">Udaljeni pristup</div>
+      <p>SSL-VPN tunnel mode je <b>uklonjen u FortiOS 7.6.3</b>. Zamena je <b>IPsec IKEv2</b> (FortiClient, po potrebi preko TCP/443) uz SAML MFA, a za pristup aplikacijama <b>ZTNA</b> sa proverom stanja uređaja (EMS). Agentless VPN (bivši web mode) samo ako je neophodan; nije podržan na 40F, 60F i 90G.</p>
+    </div>
+    <div class="card panel">
+      <div class="h4">SD-WAN i filijale</div>
+      <p>Hub-and-spoke IPsec overlay sa <b>ADVPN 2.0</b> (dinamički spoke-to-spoke tuneli), BGP na loopback adresama, dva huba (DC1/DC2), performance SLA (latency, jitter, gubitak paketa) i pravila po aplikaciji. Lokalni internet breakout samo uz pun NGFW profil ili FortiSASE.</p>
+    </div>
+    <div class="card panel">
+      <div class="h4">Logovanje i nadzor</div>
+      <p>FortiAnalyzer (HA) ili SIEM preko syslog-a/TLS-a. Logovati deny, security i admin događaje (prijave, izmene konfiguracije, novi admin nalozi); NTP; čuvanje ≥&nbsp;12&nbsp;meseci. <i>Automation stitches</i>: alarm na prijavu sa nepoznate IP adrese, novi admin nalog i HA failover.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =========================== 04 =========================== -->
+<section class="sec newpage" id="s4">
+  <header class="sec-h">
+    <div class="sec-num">04</div>
+    <div>
+      <div class="sec-kicker">Sekcija 04 · Zaštita</div>
+      <h2>NGFW tehnologije koje treba koristiti</h2>
+      <p class="lede">Vrednost NGFW-a nije u pravilu „dozvoli port 443”, već u slojevima inspekcije uključenim na granicama poverenja. Tabela daje preporučenu osnovnu konfiguraciju za enterprise.</p>
+    </div>
+  </header>
+
+  <table class="tight">
+    <thead><tr><th style="width:18%">Tehnologija</th><th style="width:27%">Šta radi</th><th>Preporuka za enterprise</th></tr></thead>
+    <tbody>
+      <tr><td><b>Application Control</b></td><td>L7 prepoznavanje aplikacija, nezavisno od porta</td><td>Blokirati rizične kategorije (P2P, proxy i anonimizatori, neodobreni remote-access); allow-list na serverskim segmentima.</td></tr>
+      <tr><td><b>IPS</b></td><td>Potpisi i anomalije protokola; „virtual patching”</td><td>Odvojeni klijentski i serverski profili; blokirati Critical/High i botnet C&amp;C; OT potpisi za industrijske segmente.</td></tr>
+      <tr><td><b>Antimalver</b></td><td>FortiGuard AV, AI/ML detekcija, Outbreak Prevention</td><td>Na svim politikama ka internetu i između zona; inline sandbox na edge-u; FortiSandbox za sumnjive fajlove.</td></tr>
+      <tr><td><b>Web filter</b></td><td>URL kategorije i reputacija</td><td>Blokirati malicious, phishing, newly observed/registered i unrated; Safe Search; pravila po grupama.</td></tr>
+      <tr><td><b>DNS filter</b></td><td>Blokada malicioznih, C2 i DGA domena</td><td>Na svim izlaznim politikama i za interni DNS; kontrolisati DoH/DoT ka nepoznatim resolverima.</td></tr>
+      <tr><td><b>SSL/TLS deep inspection</b></td><td>Dešifruje saobraćaj da bi ostali slojevi videli sadržaj</td><td>Full inspection za korisnike (CA preko GPO/MDM); izuzeci: bankarstvo, zdravlje, pinning; gosti samo certificate inspection.</td></tr>
+      <tr><td><b>File filter i DLP</b></td><td>Tipovi fajlova; FortiGuard DLP servis</td><td>Blokirati izvršne fajlove sa rizičnih kategorija; DLP za lične i finansijske podatke.</td></tr>
+      <tr><td><b>Inline CASB</b></td><td>Kontrola SaaS aplikacija i tenanta</td><td>Dozvoliti samo korporativni M365/Google tenant; vidljivost shadow IT i shadow AI.</td></tr>
+      <tr><td><b>ZTNA i identitet</b></td><td>Pristup po korisniku i stanju uređaja (FSSO, SAML, EMS)</td><td>ZTNA umesto VPN-a za web, RDP i SSH aplikacije; politike po grupama; MFA svuda.</td></tr>
+      <tr><td><b>Reputacija i CTI</b></td><td>IP reputacija, ISDB, spoljni IoC feed-ovi</td><td>Blokirati maliciozne IP adrese i anonimizere; uvesti CTI feed-ove (IP, domen, URL).</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Gde se šta uključuje — preporuka po toku saobraćaja</h3>
+  <table class="im tight">
+    <thead><tr><th style="width:24%">Tok saobraćaja</th><th>App Control</th><th>IPS</th><th>Antimalver</th><th>Web / DNS</th><th>SSL deep</th><th>DLP / CASB</th></tr></thead>
+    <tbody>
+      <tr><td>Korisnici → Internet</td><td><i class="dot full"></i></td><td><i class="dot full"></i></td><td><i class="dot full"></i></td><td><i class="dot full"></i></td><td><i class="dot full"></i></td><td><i class="dot half"></i></td></tr>
+      <tr><td>Gosti → Internet</td><td><i class="dot full"></i></td><td><i class="dot full"></i></td><td><i class="dot half"></i></td><td><i class="dot full"></i></td><td><i class="dot none"></i><span class="note">samo cert. inspection</span></td><td><i class="dot none"></i></td></tr>
+      <tr><td>Internet → DMZ</td><td><i class="dot half"></i></td><td><i class="dot full"></i><span class="note">serverski profil</span></td><td><i class="dot full"></i></td><td><i class="dot none"></i></td><td><i class="dot full"></i><span class="note">ili na WAF-u</span></td><td><i class="dot none"></i></td></tr>
+      <tr><td>Korisnici → DC</td><td><i class="dot full"></i></td><td><i class="dot full"></i></td><td><i class="dot full"></i></td><td><i class="dot none"></i></td><td><i class="dot half"></i></td><td><i class="dot half"></i></td></tr>
+      <tr><td>DC ↔ DC (east-west)</td><td><i class="dot full"></i><span class="note">allow-list</span></td><td><i class="dot full"></i><span class="note">virtual patching</span></td><td><i class="dot half"></i></td><td><i class="dot none"></i></td><td><i class="dot half"></i></td><td><i class="dot none"></i></td></tr>
+      <tr><td>IoT / OT segmenti</td><td><i class="dot full"></i><span class="note">OT protokoli</span></td><td><i class="dot full"></i><span class="note">OT potpisi</span></td><td><i class="dot half"></i></td><td><i class="dot full"></i><span class="note">DNS</span></td><td><i class="dot none"></i></td><td><i class="dot none"></i></td></tr>
+      <tr><td>VPN / ZTNA → interno</td><td><i class="dot full"></i></td><td><i class="dot full"></i></td><td><i class="dot full"></i></td><td><i class="dot half"></i></td><td><i class="dot half"></i></td><td><i class="dot half"></i></td></tr>
+    </tbody>
+  </table>
+  <div class="legend">
+    <span><i class="dot full"></i> uključiti</span>
+    <span><i class="dot half"></i> po potrebi (rizik, licenca, privatnost)</span>
+    <span><i class="dot none"></i> nije potrebno</span>
+  </div>
+
+  <div class="g2 mt">
+    <div class="card panel">
+      <div class="h4">Flow ili proxy inspekcija?</div>
+      <p><b>Flow-based</b> (podrazumevano) je najbrži i koristi hardversko ubrzanje. <b>Proxy-based</b> samo gde treba CDR, puno baferovanje fajlova ili napredne web/email funkcije.</p>
+    </div>
+    <div class="card panel">
+      <div class="h4">SSL inspekcija bez iznenađenja</div>
+      <p>Pilot grupa, CA sertifikat distribuiran unapred, dokumentovani izuzeci (privatnost, pinning). Bez dešifrovanja IPS, antimalver i DLP vide samo metapodatke.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =========================== 05 =========================== -->
+<section class="sec newpage" id="s5">
+  <header class="sec-h">
+    <div class="sec-num">05</div>
+    <div>
+      <div class="sec-kicker">Sekcija 05 · Pretnje</div>
+      <h2>Koliko je FortiGate često meta</h2>
+      <p class="lede">Kratko: veoma često. FortiGate je najrasprostranjeniji firewall i stoji direktno na internetu, što ga čini idealnom metom za državne aktere, ransomware grupe i brokere inicijalnog pristupa.</p>
+    </div>
+  </header>
+
+  <div class="g4">
+    <div class="tile"><div class="lbl">Fortinet unosa u CISA KEV</div><div class="val">32</div><div class="sub">deli 9.–10. mesto od svih proizvođača (1.766 unosa ukupno)</div></div>
+    <div class="tile"><div class="lbl">Od toga pogađa FortiOS</div><div class="val">21</div><div class="sub">FortiGate je glavna meta unutar Fortinet portfolija</div></div>
+    <div class="tile"><div class="lbl">Novih KEV unosa u 2026.</div><div class="val">9</div><div class="sub">rekord (2025: 8); stanje na dan 30.10.2026.</div></div>
+    <div class="tile"><div class="lbl">Rok u KEV-u (2026.)</div><div class="val">3&nbsp;dana</div><div class="sub">za 8 od 9 unosa (2025: 7–21 dan)</div></div>
+  </div>
+
+  <div class="g2 mt">
+    <div class="card">
+      <div class="h4">Fortinet u CISA KEV, po godini</div>
+      <!--INCLUDE:chart_kev_years.svg-->
+      <p class="caption">KEV katalog postoji od novembra 2021, pa 2021. uključuje i starije CVE-ove. *2026 = do 30.10.2026. Ostali proizvodi: EMS, FortiManager, FortiWeb, FortiSandbox, FortiMail, FortiVoice i dr.</p>
+    </div>
+    <div class="card">
+      <div class="h4">KEV unosi po proizvođaču (edge)</div>
+      <!--INCLUDE:chart_kev_vendors.svg-->
+      <p class="caption">Proizvođači mrežne i edge bezbednosti; broj unosa za sve proizvode proizvođača (Cisco i Ivanti imaju širi portfolio). Izvor: CISA KEV, verzija 2026.10.30.</p>
+    </div>
+  </div>
+
+  <div class="card mt-s">
+    <div class="h4">Gde su FortiOS ranjivosti iz KEV-a (21)</div>
+    <div class="segbar">
+      <div style="flex:7; background:#2a78d6">7</div>
+      <div style="flex:7; background:#eb6834">7</div>
+      <div style="flex:7; background:#1baf7a">7</div>
+    </div>
+    <div class="legend" style="margin-top:0">
+      <span><svg width="10" height="10"><rect width="10" height="10" rx="2" fill="#2a78d6"/></svg>SSL-VPN</span>
+      <span><svg width="10" height="10"><rect width="10" height="10" rx="2" fill="#eb6834"/></svg>Management ravan (admin GUI, FGFM, CAPWAP, SSO)</span>
+      <span><svg width="10" height="10"><rect width="10" height="10" rx="2" fill="#1baf7a"/></svg>Ostalo (post-exploitation, perzistencija)</span>
+    </div>
+    <p class="caption">Dve trećine (14 od 21) su na interfejsima koji su tipično izloženi internetu — direktan argument za arhitekturu bez SSL-VPN-a i bez management pristupa sa WAN-a.</p>
+  </div>
+
+  <h3>Obrasci koji se ponavljaju</h3>
+  <ol class="l cols2">
+        <li><b>SSL-VPN</b> je bio najveća pojedinačna površina napada — Fortinet je u 7.6.3 uklonio tunnel mode.</li>
+        <li><b>Izložen management = otvorena vrata</b>, sa CVE-om i bez njega (slabe lozinke, FortiCloud SSO).</li>
+        <li><b>Zakrpa ≠ čist uređaj</b>: COATHANGER i symlink preživljavaju upgrade, pa je potrebna provera kompromitacije.</li>
+        <li><b>Brzina</b>: veliki deo ranjivosti eksploatisan je kao zero-day ili za nekoliko dana — mitigacija mora da postoji pre zakrpe.</li>
+        <li><b>Meta je ceo Fabric</b>: svih 11 KEV unosa za druge Fortinet proizvode (EMS, FortiWeb, FortiSandbox, FortiManager, FortiMail…) dodato je od 2024.</li>
+        <li><b>Akteri</b>: državni akteri (npr. Volt Typhoon, UNC3886, kampanja COATHANGER), ransomware grupe (14 od 32 Fortinet KEV unosa ima oznaku ransomware upotrebe) i brokeri inicijalnog pristupa.</li>
+      </ol>
+
+  <h3 class="pb">Najvažniji incidenti 2021–2026</h3>
+  <div class="tl">
+        <div class="tl-item"><div class="tl-date">09/2021</div><div class="tl-body">Objavljeni kredencijali sa <b>~87.000</b> SSL-VPN uređaja (CVE-2018-13379, zakrpljen još 2019) — nezakrpljeni uređaji i nepromenjene lozinke.</div></div>
+        <div class="tl-item crit"><div class="tl-date">10/2022</div><div class="tl-body">CVE-2022-40684 (zaobilaženje admin autentifikacije); 2025. grupa „Belsen” objavljuje konfiguracije i VPN kredencijale sa <b>15.000+</b> uređaja.</div></div>
+        <div class="tl-item crit"><div class="tl-date">12/2022</div><div class="tl-body">CVE-2022-42475 (SSL-VPN, zero-day) → kineska kampanja <b>COATHANGER</b>: prema holandskom MIVD-u najmanje 20.000 FortiGate sistema za nekoliko meseci; malver preživljava reboot i upgrade.</div></div>
+        <div class="tl-item crit"><div class="tl-date">02/2024</div><div class="tl-body">CVE-2024-21762 (SSL-VPN, RCE): mesec dana posle zakrpe <b>~150.000</b> izloženih uređaja i dalje ranjivo (Shadowserver).</div></div>
+        <div class="tl-item crit"><div class="tl-date">01/2025</div><div class="tl-body">CVE-2024-55591: preuzimanje super-admin naloga preko management interfejsa; eksploatisan kao zero-day od novembra 2024.</div></div>
+        <div class="tl-item"><div class="tl-date">04/2025</div><div class="tl-body">Symlink perzistencija: napadači zadržali read-only pristup i posle zakrpe na <b>16.620</b> uređaja (Shadowserver).</div></div>
+        <div class="tl-item crit"><div class="tl-date">12/2025 – 01/2026</div><div class="tl-body">FortiCloud SSO: CVE-2025-59718 eksploatisan za nekoliko dana, zatim zero-day CVE-2026-24858; Fortinet privremeno blokira SSO sa ranjivih verzija.</div></div>
+        <div class="tl-item"><div class="tl-date">01–02/2026</div><div class="tl-body">Amazon: AI-potpomognut napadač kompromitovao <b>600+</b> FortiGate uređaja u 55 zemalja — bez ijednog CVE-a, preko izloženog managementa i slabih lozinki bez MFA.</div></div>
+        <div class="tl-item"><div class="tl-date">07–09/2026</div><div class="tl-body">CVE-2025-25249 (CAPWAP, <code>cw_acd</code>) → Node.js RAT „PivotC2” na FortiGate-u; CVE-2025-68686 zaobilazi zakrpu za symlink perzistenciju.</div></div>
+        <div class="tl-item"><div class="tl-date">10/2026</div><div class="tl-body">Fortinet „Security Hardening” izdanje (8.0.2 / 7.6.8 / 7.4.13 / 7.2.14) sa ispravkama iz AI-potpomognutog testiranja; CVE detalji najavljeni za 10.11.2026.</div></div>
+      </div>
+      <p class="caption">Puna tačka = zero-day ili eksploatacija pre ili neposredno posle objave zakrpe.</p>
+</section>
+
+<!-- =========================== 06 =========================== -->
+<section class="sec" id="s6">
+  <header class="sec-h">
+    <div class="sec-num">06</div>
+    <div>
+      <div class="sec-kicker">Sekcija 06 · Operacije</div>
+      <h2>Kako ide proces patchovanja</h2>
+      <p class="lede">Fortinet zakrpe isporučuje kao nove patch verzije FortiOS-a (npr. 7.6.7 → 7.6.8). Proces mora da pokrije dve brzine: redovan mesečni ritam i hitnu reakciju na aktivno eksploatisane ranjivosti.</p>
+    </div>
+  </header>
+
+  <div class="g2">
+    <div>
+      <div class="h4">Kako Fortinet objavljuje ranjivosti i zakrpe</div>
+      <ul class="l">
+        <li><b>PSIRT ritam</b>: advisory-ji izlaze mesečno, <b>drugog utorka u mesecu</b> (13.10.2026; sledeći 10.11.2026), a kritične i aktivno eksploatisane ranjivosti vanredno (out-of-band). FG-IR advisory sadrži pogođene verzije, CVSS, rešenje, workaround i često IoC.</li>
+        <li><b>Grane i build-ovi</b>: svaka major grana (7.4, 7.6, 8.0) dobija patch verzije označene kao <i>Feature</i> ili <i>Mature</i>. „Recommended Release” po modelu (ažurira se kvartalno) je polazna tačka za produkciju.</li>
+        <li><b>Privatna obaveštenja</b>: Fortinet ponekad unapred obaveštava korisnike — registracija uređaja i kontakti na support portalu moraju biti ažurni.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="h4">&nbsp;</div>
+      <ul class="l">
+        <li><b>Životni ciklus</b>: standardno ~36&nbsp;meseci inženjerske podrške (EoES) i ~54&nbsp;meseca do End of Support od GA; u martu 2026. (CSB-260330-1) rokovi za 7.4 i 7.6 produženi su za godinu dana.</li>
+        <li><b>Automatski upgrade</b>: od 7.4.5 / 7.6.1 podrazumevano uključen za patch verzije (osim za Fabric članove, uređaje pod FortiManager-om i sekundarne HA članove; kašnjenje 3&nbsp;dana). U enterprise okruženju upgrade kontrolišite preko FortiManager-a.</li>
+      </ul>
+    </div>
+  </div>
+
+  <table class="mt-s">
+    <thead><tr><th style="width:8%">Grana</th><th style="width:11%">GA</th><th style="width:30%">Status (oktobar 2026)</th><th style="width:17%">End of Support</th><th>Preporuka</th></tr></thead>
+    <tbody>
+      <tr><td><b>7.2</b></td><td class="nowrap">mar 2022</td><td>van podrške (7.2.14 iz oktobra je izuzetak)</td><td class="num">30.09.2026</td><td>migrirati odmah na 7.4 / 7.6</td></tr>
+      <tr><td><b>7.4</b></td><td class="nowrap">maj 2023</td><td>aktivno održavana · minimum 7.4.13</td><td class="num">11.11.2028</td><td>konzervativan izbor za produkciju</td></tr>
+      <tr><td><b>7.6</b></td><td class="nowrap">jul 2024</td><td>aktivno održavana · minimum 7.6.8</td><td class="num">25.01.2030</td><td>cilj za većinu novih implementacija</td></tr>
+      <tr><td><b>8.0</b></td><td class="nowrap">apr 2026</td><td>najnovija grana · minimum 8.0.2</td><td>nije objavljen (~54 mes. od GA)</td><td>lab i pilot, dok ne postane Recommended</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout now pb">
+    <span class="ttl">Aktuelno · oktobar 2026</span>
+    <p>Fortinet je 21–22.10.2026. objavio <b>Security Hardening</b> izdanja — FortiOS <b>8.0.2 / 7.6.8 / 7.4.13 / 7.2.14</b>, FortiManager i FortiAnalyzer 7.4.12 / 7.2.13 — sa kritičnim i visokim ispravkama pronađenim AI-potpomognutim testiranjem. CVE oznake i detalji najavljeni su za <b>10.11.2026</b>. Preporuka: planirati upgrade odmah, prvo uređaji izloženi internetu.</p>
+  </div>
+
+  <h3>Proces u 8 koraka</h3>
+  <div class="flow">
+    <div class="step"><div class="n">1</div><div class="h5">Praćenje</div><p>PSIRT (fortiguard.com/psirt, RSS, e-mail), CISA KEV, FortiGuard Outbreak Alerts, nacionalni CERT.</p></div>
+    <div class="step"><div class="n">2</div><div class="h5">Trijaža (≤&nbsp;24&nbsp;h)</div><p>Da li su verzija i model pogođeni? Da li je ranjiva funkcija uključena i izložena? Ima li eksploatacije (KEV)? → prioritet P0–P3.</p></div>
+    <div class="step"><div class="n">3</div><div class="h5">Hitna mitigacija</div><p>Workaround iz advisory-ja: isključiti funkciju, local-in politike i trusted hosts, IPS potpis (virtual patch), blokada izvora.</p></div>
+    <div class="step"><div class="n">4</div><div class="h5">Izbor verzije</div><p>Najniži build koji ispravlja CVE i jeste Recommended/Mature; release notes; Upgrade Path Tool; kompatibilnost FMG/FAZ/EMS/FortiSwitch/FortiAP.</p></div>
+    <div class="step"><div class="n">5</div><div class="h5">Priprema i test</div><p>Šifrovan backup konfiguracije, provera hash-a image-a, lab ili „kanarinac” lokacija niskog rizika, plan povratka.</p></div>
+    <div class="step"><div class="n">6</div><div class="h5">Rollout</div><p>Prvo internet-izloženi uređaji. Redosled u Fabric-u: FAZ → FMG → FortiGate → FortiSwitch/FortiAP → EMS/FortiClient; HA bez prekida.</p></div>
+    <div class="step"><div class="n">7</div><div class="h5">Verifikacija</div><p>Verzija, HA sinhronizacija, rutiranje/BGP, VPN i SD-WAN SLA, logovi u FAZ, FortiGuard update, kritične aplikacije.</p></div>
+    <div class="step"><div class="n">8</div><div class="h5">Provera kompromitacije</div><p>IoC iz advisory-ja, nepoznati admin nalozi, izmene konfiguracije, sumnjivi fajlovi. Ako je uređaj kompromitovan: čista instalacija i rotacija svih tajni.</p></div>
+  </div>
+
+  <h3>Rokovi (SLA) — predlog interne politike</h3>
+  <table>
+    <thead><tr><th style="width:17%">Prioritet</th><th>Kriterijum</th><th style="width:15%">Mitigacija</th><th style="width:22%">Zakrpa</th></tr></thead>
+    <tbody>
+      <tr><td><span class="pri p0"><i></i>P0 · hitno</span></td><td>Aktivno eksploatisano (KEV / Fortinet) i ranjiva funkcija izložena internetu</td><td>odmah, ≤&nbsp;24&nbsp;h</td><td>≤&nbsp;72&nbsp;h</td></tr>
+      <tr><td><span class="pri p1"><i></i>P1 · kritično</span></td><td>CVSS ≥&nbsp;9 bez eksploatacije, ili eksploatisano a nije izloženo</td><td>≤&nbsp;72&nbsp;h</td><td>≤&nbsp;7&nbsp;dana</td></tr>
+      <tr><td><span class="pri p2"><i></i>P2 · visoko</span></td><td>CVSS 7,0–8,9</td><td>po potrebi</td><td>≤&nbsp;30&nbsp;dana (mesečni prozor)</td></tr>
+      <tr><td><span class="pri p3"><i></i>P3 · srednje/nisko</span></td><td>CVSS &lt; 7</td><td>—</td><td>≤&nbsp;90&nbsp;dana (kvartalni ciklus)</td></tr>
+      <tr><td><span class="pri pm"><i></i>Major grana</span></td><td>Prelazak na novu granu (npr. 7.4 → 7.6)</td><td>—</td><td>svakih ~18–24&nbsp;meseca, pre EoES</td></tr>
+    </tbody>
+  </table>
+  <p class="caption">Referenca: CISA BOD 26-04 (jun 2026) određuje rokove po riziku (izloženost, KEV, automatizovanost eksploatacije, uticaj), najkraći 3&nbsp;dana; za Fortinet unose u KEV-u 2026. rok je uglavnom bio 3&nbsp;dana.</p>
+
+  <div class="g2 mt">
+    <div class="card panel">
+      <div class="h4">HA upgrade bez prekida</div>
+      <p>Uz <code>uninterruptible-upgrade</code> (podrazumevano) image se učitava na primarni: prvo se nadograđuju sekundarni, zatim failover i nadogradnja bivšeg primarnog. Uz session pickup prekid je reda sekundi — ipak u servisnom prozoru. Za flotu: FortiManager (firmware šabloni, zakazivanje).</p>
+      <p class="small" style="margin:0">Downgrade ne vraća automatski staru konfiguraciju — za povratak koristite backup napravljen na prethodnoj verziji.</p>
+    </div>
+    <div class="card panel">
+      <div class="h4">Kratka provera pre i posle</div>
+      <p style="margin-bottom:1.2mm"><b>Pre:</b> backup i revizija u FMG · release notes (special notices, known issues) · upgrade path · konzolni pristup · <code>diagnose sys ha checksum cluster</code> · važeće FortiGuard licence.</p>
+      <p style="margin:0"><b>Posle:</b> <code>get system status</code> · <code>get system ha status</code> · <code>get router info routing-table all</code> · VPN/SD-WAN status · <code>diagnose autoupdate versions</code> · logovi stižu u FAZ.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =========================== 07 =========================== -->
+<section class="sec newpage" id="s7">
+  <header class="sec-h">
+    <div class="sec-num">07</div>
+    <div>
+      <div class="sec-kicker">Sekcija 07 · Rezime</div>
+      <h2>Referentni setup i kontrolna lista</h2>
+      <p class="lede">Ceo preporučeni enterprise setup na jednom mestu, i dvadeset kontrola koje pokrivaju najveći deo rizika koji napadači danas zaista eksploatišu.</p>
+    </div>
+  </header>
+
+  <table class="tight">
+    <thead><tr><th style="width:15%">Sloj</th><th style="width:37%">Preporučeno rešenje</th><th>Ključne postavke</th></tr></thead>
+    <tbody>
+      <tr><td><b>Internet edge</b></td><td>2× FortiGate 900G–2600F, HA, Enterprise</td><td>dual ISP, DMZ, IPsec/ZTNA hub; admin nikad sa WAN-a</td></tr>
+      <tr><td><b>DC / ISFW</b></td><td>2× FortiGate NP7 (3500G, 3700F), HA, ATP</td><td>zone web/app/db i OT, IPS virtual patching, allow-list</td></tr>
+      <tr><td><b>Filijale</b></td><td>FortiGate 50G–90G, UTP</td><td>SD-WAN + ADVPN 2.0 ka dva huba, FortiLink switch/AP</td></tr>
+      <tr><td><b>Udaljeni pristup</b></td><td>FortiClient + EMS, SAML MFA (Entra ID / FAC)</td><td>IPsec IKEv2 + MFA, ZTNA za aplikacije, SSL-VPN ugašen</td></tr>
+      <tr><td><b>Upravljanje</b></td><td>FortiManager (HA) u OOB mreži</td><td>policy paketi, odobravanje izmena, firmware šabloni</td></tr>
+      <tr><td><b>Logovanje i SOC</b></td><td>FortiAnalyzer (HA) → SIEM / SOC</td><td>≥&nbsp;12&nbsp;meseci logova, alarmi na admin događaje</td></tr>
+      <tr><td><b>Operacije</b></td><td>PSIRT + KEV praćenje, patch SLA</td><td>P0 ≤&nbsp;72&nbsp;h, Recommended build na 7.4 / 7.6, IoC provera</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Kontrolna lista</h3>
+
+  <div class="chk">
+    <div class="grp"><div class="h4">Arhitektura</div><ul>
+      <li>HA klaster (FGCP A-P) na edge-u i u DC-u, dva heartbeat linka</li>
+      <li>Dual-homing (LACP) ka core paru i dva napajanja</li>
+      <li>OOB management mreža i konzolni server</li>
+      <li>Dimenzionisano po Threat Protection / SSL kapacitetu (≤&nbsp;60&nbsp;%)</li>
+      <li>Segmentacija po zonama, <code>intrazone deny</code>, ISFW za DC i OT</li>
+    </ul></div>
+    <div class="grp"><div class="h4">Politike i NGFW</div><ul>
+      <li>Default deny i eksplicitni deny sa logovanjem</li>
+      <li>Politike po identitetu (AD / Entra ID), ISDB za SaaS</li>
+      <li>IPS + AppCtrl + antimalver + web/DNS na svim granicama poverenja</li>
+      <li>SSL deep inspection za korisnike, dokumentovani izuzeci</li>
+      <li>Kvartalni pregled pravila (hit count, last used)</li>
+    </ul></div>
+    <div class="grp"><div class="h4">Management ravan</div><ul>
+      <li>Bez admin/FGFM/CAPWAP pristupa sa WAN-a; trusted hosts i local-in</li>
+      <li>MFA i RBAC za sve administratore, bez deljenih naloga</li>
+      <li>FortiCloud SSO login isključen ako se ne koristi</li>
+      <li>private-data-encryption uključen, šifrovani backup-ovi</li>
+      <li>SSL-VPN ugašen → IPsec IKEv2 / ZTNA sa MFA</li>
+    </ul></div>
+    <div class="grp"><div class="h4">Operacije i patch</div><ul>
+      <li>Pretplata na PSIRT i praćenje KEV-a; SLA za P0 ≤&nbsp;72&nbsp;h</li>
+      <li>Recommended/Mature build na podržanoj grani (7.4 / 7.6)</li>
+      <li>Logovi u FortiAnalyzer/SIEM ≥&nbsp;12&nbsp;meseci, alarmi na admin događaje</li>
+      <li>Posle kritičnih CVE-ova: lov na IoC i provera admin naloga</li>
+      <li>FortiManager za promene, revizije i rollout firmvera</li>
+    </ul></div>
+  </div>
+
+  <h3>Izvori (provereno 30–31.10.2026)</h3>
+  <ol class="src">
+    <li><b>CISA Known Exploited Vulnerabilities</b>, verzija kataloga 2026.10.30 — github.com/cisagov/kev-data (sve KEV brojke u ovom dokumentu).</li>
+    <li><b>Fortinet PSIRT</b> — fortiguard.com/psirt; PSIRT napomena o mesečnom objavljivanju (drugi utorak) — community.fortinet.com.</li>
+    <li><b>Fortinet dokumentacija</b> — Recommended Release for FortiOS (KB); FortiOS 7.6.3 Release Notes, Special notices (SSL VPN tunnel mode); Automatic firmware upgrade (7.4.5 / 7.6.1); Upgrade Path Tool — docs.fortinet.com/upgrade-tool.</li>
+    <li><b>Fortinet</b> — Technical Tip: FortiOS End of Support change for v7.4 and v7.6 (CSB-260330-1, mart 2026); Product Life Cycle.</li>
+    <li><b>Fortinet saopštenja</b> — FortiOS 8.0 (Accelerate, mart 2026); Q4/FY2025 rezultati (5.2.2026); Leader u Gartner MQ za Hybrid Mesh Firewall (27.8.2025).</li>
+    <li><b>Security Hardening izdanje</b> (21.10.2026) — Canadian Centre for Cyber Security AV26-1081; HKCERT bilten 23.10.2026.</li>
+    <li><b>CISA BOD 26-04</b> „Prioritizing Security Updates Based on Risk” (10.6.2026) — pregledi: SecurityWeek, Tenable.</li>
+    <li><b>Amazon Threat Intelligence</b> — „AI-augmented threat actor accesses FortiGate devices at scale”, AWS Security Blog (feb 2026).</li>
+    <li><b>MIVD/AIVD i NCSC-NL</b> — COATHANGER (feb. i jun 2024), preko Help Net Security i The Record.</li>
+    <li><b>Shadowserver</b> (preko BleepingComputer i The Hacker News) — CVE-2024-21762 (mar 2024); symlink perzistencija (apr 2025).</li>
+    <li><b>Arctic Wolf / BleepingComputer</b> — CVE-2026-24858 FortiCloud SSO (jan 2026). <b>SOCRadar</b> — CVE-2025-25249 / PivotC2 (2026). <b>HKCERT, The Record</b> — curenje kredencijala 2021.</li>
+  </ol>
+  <p class="end-note">Nezavisan pregled; nije zvaničan Fortinet materijal. Nazivi proizvoda i robne marke pripadaju njihovim vlasnicima. Konfiguracioni primeri su ilustrativni — pre primene ih prilagodite i testirajte u svom okruženju.</p>
+</section>
+
+<script>
+// minimal CLI highlighting
+document.querySelectorAll('pre.code').forEach(function (pre) {
+  var lines = pre.innerHTML.split('\n');
+  pre.innerHTML = lines.map(function (l) {
+    var cmt = '';
+    var i = l.indexOf('#');
+    if (i >= 0) { cmt = '<span class="c">' + l.slice(i) + '</span>'; l = l.slice(0, i); }
+    l = l.replace(/^(\s*)(config|edit|set|next|end|get|diagnose|execute|unset)\b/, '$1<span class="k">$2</span>');
+    return l + cmt;
+  }).join('\n');
+});
+</script>
+</body>
+</html>
