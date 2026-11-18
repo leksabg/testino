@@ -30,8 +30,11 @@ ITEMS = {
     "FC1-10-AZVMS-465-01-12": ("FortiAnalyzer-VM, 5 GB/dan", "logovi i SOC, 1 god.", Decimal("1265.00"), "AVFirewalls / CDW-G"),
     "FAC-VM (bez licence)": ("FortiAuthenticator-VM", "RADIUS, 802.1X, MFA (5 korisnika)", Decimal("0"), "besplatno, ne ističe"),
     "FCT-EMS (trial)": ("FortiClient EMS (trial)", "ZTNA, 3 uređaja", Decimal("0"), "besplatno, ne ističe"),
+    "GPI-130": ("PoE injektor 802.3at (GPI-130)", "napajanje AP-a, 30G nema PoE", Decimal("164.00"), "Ingram Micro / CDW"),
 }
 
+# cheap setup from the earlier conversation: cheapest FortiGate + 2 AP (+ PoE, the 30G has none)
+CHEAP = [("FG-30G-BDL-950-12", 1), ("FAP-231K-E", 2), ("GPI-130", 2)]
 MID = [("FG-30G-BDL-950-12", 1), ("FS-108F-FPOE", 2), ("FAP-231K-E", 2)]
 ENT = [
     ("FG-120G-BDL-809-12", 2), ("FG-50G-BDL-950-12", 2), ("FS-424E", 2),
@@ -212,6 +215,7 @@ table.short tr.tot td { font-size: 8.8pt; }
 
 
 def build_html():
+    cheap_lt, cheap_nt = totals(CHEAP)
     mid_lt, mid_nt = totals(MID)
     ent_lt, ent_nt = totals(ENT)
     add_lt, add_nt = totals(MID_ADDON)
@@ -328,7 +332,7 @@ def build_html():
   <ul class="l">
     <li>Lista = MSRP iz javnih cenovnika ovlašćenih distributera (SHI, CDW, AVFirewalls, Ingram Micro), novembar 2026. Cena = lista × 0,55 (vaš popust od 45 %), zaokruženo po komadu.</li>
     <li>Iznosi su u USD, bez PDV-a, transporta i dodatnih carinskih troškova. Licence (UTP, Enterprise Protection, FortiManager, FortiAnalyzer) važe 1 godinu.</li>
-    <li>Jeftini setup iz ranijeg razgovora računam kao FortiGate 30G + 2× FortiAP 231K. Ako ste uzeli druge modele, menjaju se samo ti redovi.</li>
+    <li>Jeftini setup iz ranijeg razgovora računam kao FortiGate 30G + 2× FortiAP 231K + 2 PoE injektora (30G nema PoE portove). Ako ste uzeli druge modele, menjaju se samo ti redovi.</li>
   </ul>
   <div class="h4 mt">Izvori cena</div>
   <ol class="src">
@@ -343,16 +347,19 @@ def build_html():
 <section class="sec pb">
   <header class="sec-h"><div class="sec-num">03</div><div>
     <h2>Skraćeni popis</h2>
-    <p class="lede">Naziv uređaja, količina, cena po komadu sa popustom od 45 % i ukupno.</p>
+    <p class="lede">Sva tri setupa: naziv uređaja, količina, cena po komadu sa popustom od 45 % i ukupno.</p>
   </div></header>
+  {short_table("Jeftini setup (FortiGate + 2 AP)", CHEAP)}
+  <div class="mt"></div>
   {short_table("Srednji setup (FortiLink)", MID)}
   <div class="mt"></div>
   {short_table("Enterprise test setup", ENT)}
   <div class="grand">
+    <div class="tile"><div class="lbl">Jeftini setup</div><div class="val">{money(cheap_nt)}</div><div class="sub">lista {money(cheap_lt)}</div></div>
     <div class="tile"><div class="lbl">Srednji setup</div><div class="val">{money(mid_nt)}</div><div class="sub">lista {money(mid_lt)}</div></div>
     <div class="tile hl"><div class="lbl">Enterprise setup</div><div class="val">{money(ent_nt)}</div><div class="sub">lista {money(ent_lt)}</div></div>
-    <div class="tile"><div class="lbl">Srednji pa enterprise</div><div class="val">{money(mid_nt + ent_after_mid)}</div><div class="sub">oba setupa, uz ponovo korišćene switcheve i AP-ove</div></div>
   </div>
+  <p class="note">Ako idete redom, svaki korak koristi opremu iz prethodnog: jeftini {money(cheap_nt)} → srednji +{money(add_nt)} → enterprise +{money(ent_after_mid)} = ukupno {money(cheap_nt + add_nt + ent_after_mid)} (PoE injektori iz jeftinog setupa tada ostaju rezerva).</p>
 </section>
 </body></html>"""
 
