@@ -18,13 +18,15 @@ DISCOUNT = Decimal("0.45")
 CENT = Decimal("0.01")
 
 # sku: (name shown in tables, short role, list price USD, price source)
+# source "ponuda" = distributor NFR quote (Nov 2026); everything else is an estimate from US MSRP
 ITEMS = {
     "FG-30G-BDL-950-12": ("FortiGate 30G + UTP 1 god.", "FortiLink i WLAN kontroler", Decimal("855.50"), "SHI MSRP"),
     "FG-50G-BDL-950-12": ("FortiGate 50G + UTP 1 god.", "filijala (SD-WAN spoke)", Decimal("1362.50"), "SHI / AVFirewalls"),
-    "FG-120G-BDL-809-12": ("FortiGate 120G + Enterprise 1 god.", "HQ, HA par", Decimal("7416.00"), "CDW / SHI MSRP"),
+    "FG-120G-BDL-950-12-NFR": ("FortiGate 120G + UTP 1 god.", "HQ, HA par", Decimal("9393.41"), "ponuda"),
     "FS-108F-FPOE": ("FortiSwitch 108F-FPOE", "access, 8× PoE+ (130 W)", Decimal("594.00"), "SHI MSRP"),
     "FS-424E": ("FortiSwitch 424E", "MCLAG core, 4× 10G SFP+", Decimal("1637.00"), "SHI / AVFirewalls"),
-    "FAP-231K-E": ("FortiAP 231K (Wi-Fi 7)", "access point", Decimal("654.00"), "SHI MSRP"),
+    "FAP-231K-E-NFR": ("FortiAP 231K (Wi-Fi 7, 3 radija)", "AP, 5G port", Decimal("741.96"), "ponuda"),
+    "FAP-241K-E-NFR": ("FortiAP 241K (Wi-Fi 7, 4 radija)", "AP, 10G port, 4. radio za skeniranje", Decimal("1211.76"), "ponuda"),
     "SP-CABLE-FS-SFP+1": ("DAC kabl 10G SFP+, 1 m", "FortiLink 10G i ICL", Decimal("104.00"), "Ingram Micro"),
     "FC1-10-FMGVS-258-01-12": ("FortiManager-VM, 10 uređaja", "upravljanje, 1 god.", Decimal("403.52"), "SHI MSRP"),
     "FC1-10-AZVMS-465-01-12": ("FortiAnalyzer-VM, 5 GB/dan", "logovi i SOC, 1 god.", Decimal("1265.00"), "AVFirewalls / CDW-G"),
@@ -34,16 +36,16 @@ ITEMS = {
 }
 
 # cheap setup from the earlier conversation: cheapest FortiGate + 2 AP (+ PoE, the 30G has none)
-CHEAP = [("FG-30G-BDL-950-12", 1), ("FAP-231K-E", 2), ("GPI-130", 2)]
-MID = [("FG-30G-BDL-950-12", 1), ("FS-108F-FPOE", 2), ("FAP-231K-E", 2)]
+CHEAP = [("FG-30G-BDL-950-12", 1), ("FAP-231K-E-NFR", 1), ("FAP-241K-E-NFR", 1), ("GPI-130", 2)]
+MID = [("FG-30G-BDL-950-12", 1), ("FS-108F-FPOE", 2), ("FAP-231K-E-NFR", 1), ("FAP-241K-E-NFR", 1)]
 ENT = [
-    ("FG-120G-BDL-809-12", 2), ("FG-50G-BDL-950-12", 2), ("FS-424E", 2),
-    ("FS-108F-FPOE", 2), ("FAP-231K-E", 3), ("SP-CABLE-FS-SFP+1", 6),
+    ("FG-120G-BDL-950-12-NFR", 2), ("FG-50G-BDL-950-12", 2), ("FS-424E", 2),
+    ("FS-108F-FPOE", 2), ("FAP-231K-E-NFR", 2), ("FAP-241K-E-NFR", 1), ("SP-CABLE-FS-SFP+1", 6),
     ("FC1-10-FMGVS-258-01-12", 1), ("FC1-10-AZVMS-465-01-12", 1),
     ("FAC-VM (bez licence)", 1), ("FCT-EMS (trial)", 1),
 ]
 # what the mid setup already brings to the enterprise one
-REUSED = {"FS-108F-FPOE": 2, "FAP-231K-E": 2}
+REUSED = {"FS-108F-FPOE": 2, "FAP-231K-E-NFR": 1, "FAP-241K-E-NFR": 1}
 # what the mid setup adds on top of the cheap one (FortiGate + 2 AP)
 MID_ADDON = [("FS-108F-FPOE", 2)]
 
@@ -71,12 +73,19 @@ def money(d):
     return s.replace(",", "X").replace(".", ",").replace("X", ".") + " $"
 
 
+def origin(l):
+    if l["list"] == 0:
+        return "besplatno"
+    return "ponuda" if l["src"] == "ponuda" else "procena"
+
+
 def bom_table(bom):
     rows = []
     for l in lines(bom):
         free = l["list"] == 0
+        tag = {"ponuda": "cena iz ponude", "procena": "procena", "besplatno": "besplatna verzija"}[origin(l)]
         rows.append(
-            f'<tr><td><b>{l["name"]}</b><span class="sku">{l["sku"]}</span></td>'
+            f'<tr><td><b>{l["name"]}</b><span class="sku">{l["sku"]} · {tag}</span></td>'
             f'<td>{l["role"]}</td><td class="num c">{l["qty"]}</td>'
             f'<td class="num r">{"—" if free else money(l["list"])}</td>'
             f'<td class="num r">{"0,00 $" if free else money(l["net"])}</td>'
@@ -93,16 +102,17 @@ def bom_table(bom):
 def short_table(title, bom):
     rows = "".join(
         f'<tr><td>{l["name"]}</td><td class="num c">{l["qty"]}</td>'
-        f'<td class="num r">{money(l["net"])}</td><td class="num r">{money(l["total"])}</td></tr>'
+        f'<td class="num r">{money(l["net"])}</td><td class="num r">{money(l["total"])}</td>'
+        f'<td class="src-{origin(l)}">{origin(l)}</td></tr>'
         for l in lines(bom))
     _, nt = totals(bom)
     return (f'<div class="h4">{title}</div><table class="short"><thead><tr><th>Naziv uređaja</th>'
-            '<th class="c" style="width:10%">Količina</th><th class="r" style="width:17%">Cena</th>'
-            '<th class="r" style="width:17%">Ukupno</th></tr></thead><tbody>' + rows +
-            f'<tr class="tot"><td colspan="3">Ukupno</td><td class="num r">{money(nt)}</td></tr></tbody></table>')
+            '<th class="c" style="width:9%">Količina</th><th class="r" style="width:15%">Cena</th>'
+            '<th class="r" style="width:15%">Ukupno</th><th style="width:11%">Cena iz</th></tr></thead><tbody>' + rows +
+            f'<tr class="tot"><td colspan="3">Ukupno</td><td class="num r">{money(nt)}</td><td></td></tr></tbody></table>')
 
 
-MID_SVG = """<svg viewBox="0 0 640 180" width="100%" role="img" aria-label="Srednji setup: FortiGate 30G, dva FortiSwitch-a i dva FortiAP-a" font-family="Inter, 'DejaVu Sans', sans-serif">
+MID_SVG = """<svg viewBox="0 0 640 136" width="100%" role="img" aria-label="Srednji setup: FortiGate 30G, dva FortiSwitch-a i dva FortiAP-a" font-family="Inter, 'DejaVu Sans', sans-serif">
 <style>.b{fill:#fff;stroke:#c9d1dc}.f{fill:#0b1f3a}.t{font-size:10px;font-weight:600;fill:#0f172a}.s{font-size:8.4px;fill:#5d6778}.w{font-size:10px;font-weight:600;fill:#fff}.ws{font-size:8.2px;fill:#b9c7dd}.l{stroke:#6b7482;stroke-width:1.3;fill:none}.isl{stroke:#eb6834;stroke-width:2.2}</style>
 <rect class="b" x="14" y="22" width="92" height="30" rx="15"/><text class="t" x="60" y="41" text-anchor="middle">Internet</text>
 <line class="l" x1="106" y1="37" x2="140" y2="37"/>
@@ -113,11 +123,9 @@ MID_SVG = """<svg viewBox="0 0 640 180" width="100%" role="img" aria-label="Sred
 <line class="isl" x1="430" y1="32" x2="496" y2="32"/><line class="isl" x1="430" y1="44" x2="496" y2="44"/><text class="s" x="463" y="27" text-anchor="middle">ISL / LAG 2× 1G</text>
 <line class="l" x1="365" y1="60" x2="365" y2="90"/><line class="l" x1="561" y1="60" x2="561" y2="90"/>
 <rect class="b" x="310" y="90" width="110" height="38" rx="6"/><text class="t" x="365" y="107" text-anchor="middle">FortiAP 231K</text><text class="s" x="365" y="120" text-anchor="middle">PoE+ sa switcha #1</text>
-<rect class="b" x="506" y="90" width="110" height="38" rx="6"/><text class="t" x="561" y="107" text-anchor="middle">FortiAP 231K</text><text class="s" x="561" y="120" text-anchor="middle">PoE+ sa switcha #2</text>
+<rect class="b" x="506" y="90" width="110" height="38" rx="6"/><text class="t" x="561" y="107" text-anchor="middle">FortiAP 241K</text><text class="s" x="561" y="120" text-anchor="middle">PoE+ sa switcha #2</text>
 <rect class="b" x="140" y="90" width="130" height="38" rx="6"/><text class="t" x="205" y="107" text-anchor="middle">Klijenti po VLAN-u</text><text class="s" x="205" y="120" text-anchor="middle">korisnici · gosti · IoT</text>
 <line class="l" x1="270" y1="109" x2="300" y2="109"/><line class="l" x1="300" y1="109" x2="300" y2="60"/>
-<rect x="14" y="140" width="612" height="34" rx="6" fill="#f4f6f9" stroke="#c9d1dc" stroke-dasharray="4 3"/>
-<text class="t" x="26" y="154">EVE-NG: besplatni VM-ovi (0 $)</text><text class="s" x="26" y="167">FortiAuthenticator-VM za RADIUS / 802.1X / WPA3-Enterprise · FortiManager i FortiAnalyzer trial (do 3 uređaja) · FortiClient EMS trial</text>
 </svg>"""
 
 ENT_SVG = """<svg viewBox="0 0 640 316" width="100%" role="img" aria-label="Enterprise test setup" font-family="Inter, 'DejaVu Sans', sans-serif">
@@ -139,7 +147,7 @@ ENT_SVG = """<svg viewBox="0 0 640 316" width="100%" role="img" aria-label="Ente
 <line class="l" x1="206" y1="240" x2="206" y2="270"/><line class="l" x1="256" y1="240" x2="300" y2="270"/><line class="l" x1="422" y1="240" x2="422" y2="270"/>
 <rect class="b" x="160" y="270" width="92" height="36" rx="5"/><text class="t" x="206" y="286" text-anchor="middle">FortiAP 231K</text><text class="s" x="206" y="298" text-anchor="middle">Wi-Fi 7</text>
 <rect class="b" x="262" y="270" width="92" height="36" rx="5"/><text class="t" x="308" y="286" text-anchor="middle">FortiAP 231K</text><text class="s" x="308" y="298" text-anchor="middle">roaming</text>
-<rect class="b" x="376" y="270" width="92" height="36" rx="5"/><text class="t" x="422" y="286" text-anchor="middle">FortiAP 231K</text><text class="s" x="422" y="298" text-anchor="middle">WIDS / mesh</text>
+<rect class="b" x="376" y="270" width="92" height="36" rx="5"/><text class="t" x="422" y="286" text-anchor="middle">FortiAP 241K</text><text class="s" x="422" y="298" text-anchor="middle">WIDS, 4. radio</text>
 <rect class="f" x="10" y="54" width="118" height="36" rx="5"/><text class="w" x="69" y="70" text-anchor="middle">FortiGate 50G</text><text class="ws" x="69" y="82" text-anchor="middle">filijala 1 (spoke)</text>
 <rect class="f" x="10" y="128" width="118" height="36" rx="5"/><text class="w" x="69" y="144" text-anchor="middle">FortiGate 50G</text><text class="ws" x="69" y="156" text-anchor="middle">filijala 2 (spoke)</text>
 <path class="v" d="M128 70 L216 64"/><path class="v" d="M128 146 L216 80"/><path class="v" d="M69 90 L69 128"/>
@@ -210,6 +218,7 @@ table.short tr.tot td { font-size: 8.8pt; }
 .legend { display: flex; gap: 5mm; flex-wrap: wrap; font-size: 7.2pt; color: var(--muted); margin-top: 1.8mm; }
 .legend span { display: inline-flex; align-items: center; gap: 1.5mm; }
 .src { font-size: 7.1pt; color: var(--muted); padding-left: 4mm; margin: 0; } .src li { margin-bottom: .6mm; }
+.src-ponuda { color: #0a7a3a; font-weight: 600; } .src-procena, .src-besplatno { color: var(--muted); }
 .grand { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3mm; margin-top: 4mm; }
 """
 
@@ -222,7 +231,7 @@ def build_html():
     reuse_net = sum(net(s) * q for s, q in REUSED.items())
     ent_after_mid = ent_nt - reuse_net
     fmg_faz_save = net("FC1-10-FMGVS-258-01-12") + net("FC1-10-AZVMS-465-01-12")
-    g90_save = (Decimal("7416.00") - Decimal("5117.40")) * (1 - DISCOUNT) * 2
+    g90_save = (ITEMS["FG-120G-BDL-950-12-NFR"][2] - Decimal("5828.30")) * (1 - DISCOUNT) * 2
     g90_save = g90_save.quantize(CENT, ROUND_HALF_UP)
     dac_save = net("SP-CABLE-FS-SFP+1") * 6
 
@@ -232,7 +241,7 @@ def build_html():
 <style>{CSS}</style></head><body>
 
 <div class="band">
-  <div class="kicker">Predlog opreme · cene sa popustom 45 % · novembar 2026</div>
+  <div class="kicker">Predlog opreme · okvirne cene sa popustom 45 % · novembar 2026</div>
   <h1>Fortinet test laboratorija:<br>srednji i enterprise setup</h1>
   <p>Srednji setup dodaje FortiLink sa dva switcha za najmanje para. Enterprise setup pokriva sve: HA, MCLAG, Wi-Fi 7, SD-WAN, ZTNA, FortiManager i FortiAnalyzer.</p>
 </div>
@@ -243,7 +252,7 @@ def build_html():
   <div class="tile hl"><div class="lbl">Enterprise test (sve)</div><div class="val">{money(ent_nt)}</div><div class="sub">lista {money(ent_lt)}</div></div>
   <div class="tile"><div class="lbl">Enterprise posle srednjeg</div><div class="val">{money(ent_after_mid)}</div><div class="sub">switchevi 108F i 2 AP-a se ponovo koriste</div></div>
 </div>
-<p class="note">Cene u USD: lista (MSRP) umanjena za vaš popust od 45 %, bez PDV-a i transporta. Kako su računate i odakle su, piše na strani 3.</p>
+<p class="note">Cene su okvirne, sa popustom od 45 % koji smo dobili, u USD bez PDV-a i transporta. FortiGate 120G, FortiAP 231K i 241K su iz ponude distributera, ostalo je procena (strana 3).</p>
 
 <section class="sec">
   <header class="sec-h"><div class="sec-num">01</div><div>
@@ -257,8 +266,7 @@ def build_html():
       <ul class="l">
         <li><b>FortiLink:</b> otkrivanje i autorizacija switcheva, upgrade firmvera switcheva i AP-ova sa FortiGate-a.</li>
         <li><b>Između switcheva:</b> ISL, LAG trunk sa 2 linka, VLAN-ovi preko oba switcha, STP i zaštita od petlji.</li>
-        <li><b>Port:</b> NAC (VLAN po tipu uređaja), karantin hosta, DHCP snooping, PoE.</li>
-        <li><b>802.1X i WPA3-Enterprise</b> uz FortiAuthenticator-VM u EVE-NG (5 korisnika besplatno).</li>
+        <li><b>Port i Wi-Fi:</b> NAC, karantin hosta, PoE, dva različita AP-a; 802.1X i WPA3-Enterprise uz besplatni FortiAuthenticator-VM u EVE-NG.</li>
       </ul>
     </div>
     <div>
@@ -292,11 +300,11 @@ def build_html():
     <thead><tr><th>Funkcija</th><th>Na čemu se testira</th></tr></thead>
     <tbody>
       <tr><td>HA (FGCP active-passive), session pickup, upgrade bez prekida</td><td>2× FortiGate 120G</td></tr>
-      <tr><td>NGFW: IPS, Application Control, antimalver, web/DNS filter, SSL deep inspection</td><td>Enterprise Protection paket na 120G</td></tr>
-      <tr><td>Inline CASB, DLP, inline sandbox</td><td>Enterprise Protection paket na 120G</td></tr>
+      <tr><td>NGFW: IPS, Application Control, antimalver, web/DNS filter, SSL deep inspection</td><td>UTP paket na 120G</td></tr>
+      <tr><td>Inline CASB, DLP, inline sandbox</td><td><b>Nije u UTP paketu</b> iz ponude: treba Enterprise paket (FG-120G-BDL-809-12)</td></tr>
       <tr><td>FortiLink preko MCLAG-a, multi-tier, zaštita od split-brain-a</td><td>2× FS-424E (core, ICL 2× 10G) + 2× FS-108F-FPOE</td></tr>
       <tr><td>NAC, 802.1X, dinamički VLAN, PoE</td><td>FortiSwitch + FortiAuthenticator-VM</td></tr>
-      <tr><td>Wi-Fi 7: roaming (802.11r/k/v), WPA3-Enterprise, WIDS, gost portal</td><td>3× FortiAP 231K</td></tr>
+      <tr><td>Wi-Fi 7: roaming (802.11r/k/v), WPA3-Enterprise, WIDS, gost portal</td><td>2× FortiAP 231K + 1× FortiAP 241K</td></tr>
       <tr><td>SD-WAN, ADVPN 2.0, BGP na loopback-u, failover linkova</td><td>HA par kao hub + 2× FortiGate 50G</td></tr>
       <tr><td>ZTNA i provera stanja uređaja</td><td>FortiClient EMS (trial, 3 uređaja)</td></tr>
       <tr><td>MFA, SAML, RADIUS</td><td>FortiAuthenticator-VM + 2 besplatna FortiToken Mobile uz FortiGate</td></tr>
@@ -315,7 +323,7 @@ def build_html():
       <span class="ttl">Gde može jeftinije</span>
       <ul>
         <li>FortiManager i FortiAnalyzer kao besplatni trial: −{money(fmg_faz_save)} (FMG do 3 uređaja, bez FortiGuard servisa).</li>
-        <li>2× FortiGate 90G umesto 120G: −{money(g90_save)} (manje portova i performansi, iste funkcije).</li>
+        <li>2× FortiGate 90G umesto 120G: oko −{money(g90_save)} (procena; manje portova i performansi, iste funkcije).</li>
         <li>Bez DAC kablova, sve na 1G bakru: −{money(dac_save)}.</li>
       </ul>
     </div>
@@ -324,23 +332,26 @@ def build_html():
       <ul>
         <li>Server ili EVE-NG host za VM-ove: računajte najmanje ~48 GB RAM (FMG i FAZ po 16 GB).</li>
         <li>Dva ISP linka za SD-WAN test, rek, patch kablovi, mali switch za WAN stranu HA para.</li>
+        <li>Enterprise paket za DLP, inline CASB i inline sandbox (ponuda je za UTP).</li>
         <li>FortiCare za switcheve i AP-ove (za test nije neophodan) i obnova licenci posle 1. godine.</li>
       </ul>
     </div>
   </div>
   <h3>Kako su računate cene</h3>
   <ul class="l">
-    <li>Lista = MSRP iz javnih cenovnika ovlašćenih distributera (SHI, CDW, AVFirewalls, Ingram Micro), novembar 2026. Cena = lista × 0,55 (vaš popust od 45 %), zaokruženo po komadu.</li>
-    <li>Iznosi su u USD, bez PDV-a, transporta i dodatnih carinskih troškova. Licence (UTP, Enterprise Protection, FortiManager, FortiAnalyzer) važe 1 godinu.</li>
-    <li>Jeftini setup iz ranijeg razgovora računam kao FortiGate 30G + 2× FortiAP 231K + 2 PoE injektora (30G nema PoE portove). Ako ste uzeli druge modele, menjaju se samo ti redovi.</li>
+    <li><b>Iz ponude distributera</b> (NFR, popust 45 %): FortiGate 120G sa UTP paketom, FortiAP 231K i FortiAP 241K.</li>
+    <li><b>Procena</b> za sve ostalo: US lista (MSRP, novembar 2026) × 0,55. Ponuda je pokazala da je lista distributera viša od US MSRP-a (231K: 741,96 $ naspram 654 $), pa su procenjene stavke verovatno niže od stvarnih; za njih tražite ponudu.</li>
+    <li>Iznosi su u USD, bez PDV-a, transporta i dodatnih carinskih troškova. Licence (UTP, FortiManager, FortiAnalyzer) važe 1 godinu.</li>
+    <li>Svaki setup ima oba AP modela iz ponude (231K i 241K). Jeftini setup: FortiGate 30G + oba AP-a + 2 PoE injektora (30G nema PoE portove).</li>
+    <li>NFR oprema je za internu laboratoriju i demo. Proverite sa distributerom koliko komada istog modela možete uzeti; za HA par trebaju 2× 120G.</li>
   </ul>
   <div class="h4 mt">Izvori cena</div>
   <ol class="src">
-    <li>FortiGate 30G, 50G (UTP), FortiSwitch 108F-FPOE, FortiAP 231K, FortiManager-VM: MSRP na shi.com.</li>
-    <li>FortiGate 120G (Enterprise Protection): MSRP 7.416 $ na cdw.com i shi.com (raspon na tržištu 5.550–8.158 $).</li>
+    <li>FortiGate 120G (UTP), FortiAP 231K, FortiAP 241K: ponuda distributera, NFR, novembar 2026.</li>
+    <li>FortiGate 30G, 50G (UTP), FortiSwitch 108F-FPOE, FortiManager-VM: MSRP na shi.com. FortiGate 90G (UTP, za uštedu): 5.828,30 $ (avfirewalls.com, cdw.com).</li>
     <li>FortiSwitch 424E: lista 1.637 $ (shi.com, avfirewalls.com). FortiAnalyzer-VM: lista 1.265 $ (avfirewalls.com, cdwg.com).</li>
-    <li>DAC kabl SP-CABLE-FS-SFP+1: 104 $ (Ingram Micro). FortiAuthenticator-VM i FortiClient EMS: besplatni režimi bez isteka (Fortinet dokumentacija).</li>
-    <li>Cenovnici US distributera se međusobno razlikuju i do ~30 %, a EMEA lista vašeg distributera može biti drugačija. Za narudžbinu tražite zvaničnu ponudu.</li>
+    <li>DAC kabl SP-CABLE-FS-SFP+1: 104 $; PoE injektor GPI-130: 164 $ (Ingram Micro, CDW). FortiAuthenticator-VM i FortiClient EMS: besplatni režimi bez isteka.</li>
+    <li>Cene su okvirne. Konačne važe po zvaničnoj ponudi distributera za sve stavke.</li>
   </ol>
 </section>
 
