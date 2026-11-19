@@ -249,7 +249,8 @@ def read_maildir(path, folder, opts):
             fp = os.path.join(d, name)
             if not os.path.isfile(fp):
                 continue
-            flags = name.split(":2,", 1)[1] if ":2," in name else ""
+            m = re.search(r"[:!;]2,([A-Za-z]*)$", name)  # Windows alati koriste "!" umesto ":"
+            flags = m.group(1) if m else ""
             if "T" in flags and not opts.include_deleted:
                 _bump(opts, "preskoceno_obrisano")
                 continue

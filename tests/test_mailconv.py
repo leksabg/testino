@@ -90,7 +90,8 @@ def test_sources_all_formats(tmp_path):
     _write(f"{t}/tb/Inbox", b"From - x\nX-Mozilla-Status: 0001\nFrom: a@b.c\nSubject: r\n\nx\n\n"
                             b"From - x\nX-Mozilla-Status: 0009\nFrom: a@b.c\nSubject: del\n\nx\n")
     _write(f"{t}/tb/Inbox.sbd/Sub", b"From - x\nFrom: a@b.c\nSubject: s\n\nx\n")
-    _write(f"{t}/md/cur/1:2,S", b"From: a@b.c\nSubject: md\n\nx\n")
+    sep = "!" if os.name == "nt" else ":"
+    _write(f"{t}/md/cur/1{sep}2,S", b"From: a@b.c\nSubject: md\n\nx\n")
     os.makedirs(f"{t}/md/new"); os.makedirs(f"{t}/md/tmp")
     m = b"From: a@b.c\nSubject: emlx\n\nx\n"
     _write(f"{t}/apple/Box.mbox/Messages/1.emlx", str(len(m)).encode() + b"\n" + m + b"<plist/>")

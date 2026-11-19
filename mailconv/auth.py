@@ -15,13 +15,14 @@ class TokenProvider:
 
     def __init__(self, mode: str, client_id: str, tenant: str, secret: str | None = None,
                  cache_path: str = ".mailconv_token_cache.json", login_hint: str | None = None,
-                 log=print):
+                 log=print, device_callback=None):
         try:
             import msal
         except ImportError as e:
             raise SystemExit("Nedostaje msal: pip install msal") from e
         self.mode = mode
         self.log = log
+        self.device_callback = device_callback  # GUI: prozor sa kodom za prijavu
         self.lock = threading.Lock()
         self.login_hint = login_hint
         self.cache_path = cache_path
@@ -64,7 +65,13 @@ class TokenProvider:
                     if "user_code" not in flow:
                         raise SystemExit(f"Ne mogu da pokrenem prijavu: {flow.get('error_description', flow)}")
                     self.log("\n" + "=" * 70 + "\nPRIJAVA: " + flow["message"] + "\n" + "=" * 70 + "\n")
-                    res = self.app.acquire_token_by_device_flow(flow)
+                    if self.device_callback:
+                        self.device_callback(flow)
+                    try:
+                        res = self.app.acquire_token_by_device_flow(flow)
+                    finally:
+                        if self.device_callback:
+                            self.device_callback(None)
                 self._save()
             if not res or "access_token" not in res:
                 err = (res or {}).get("error_description") or (res or {}).get("error") or res

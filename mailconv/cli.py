@@ -62,6 +62,33 @@ def _opts(a) -> Options:
                    x500_domain=dom or "unknown.invalid", include_deleted=a.include_deleted)
 
 
+def _iter(a, opts: Options, extra=None):
+    """iter_inputs + podrska za GUI: prekid (a.cancel) i napredak (a.progress)."""
+    import time as _t
+
+    cancel = getattr(a, "cancel", None)
+    progress = getattr(a, "progress", None)
+    n = 0
+    last = 0.0
+    for it in iter_inputs(a.inputs, opts):
+        if cancel is not None and cancel.is_set():
+            raise KeyboardInterrupt
+        if isinstance(it, Item):
+            n += 1
+        if progress and _t.time() - last > 0.3:
+            last = _t.time()
+            d = {"procitano": n}
+            if extra:
+                d.update(extra())
+            progress(d)
+        yield it
+    if progress:
+        d = {"procitano": n}
+        if extra:
+            d.update(extra())
+        progress(d)
+
+
 def _print_stats(log, opts: Options):
     if opts.stats:
         log("Fajlovi/izvori: " + ", ".join(f"{k}={v}" for k, v in sorted(opts.stats.items())))
@@ -75,7 +102,7 @@ def cmd_scan(a, log):
     errors = 0
     size = 0
     report = ErrorReport(a.report)
-    for it in iter_inputs(a.inputs, opts):
+    for it in _iter(a, opts):
         if isinstance(it, Error):
             errors += 1
             report(it.origin, "/".join(it.folder), it.error)
@@ -108,7 +135,7 @@ def cmd_convert(a, log):
     report = ErrorReport(a.report)
     n = err = 0
     try:
-        for it in iter_inputs(a.inputs, opts):
+        for it in _iter(a, opts):
             if isinstance(it, Error):
                 err += 1
                 report(it.origin, "/".join(it.folder), it.error)
@@ -164,7 +191,8 @@ def _token_provider(a, log):
         raise SystemExit("Za --auth app navedi --tenant (npr. firma.onmicrosoft.com)")
     return TokenProvider(a.auth, client_id, tenant,
                          secret=a.client_secret or os.environ.get("MAILCONV_CLIENT_SECRET"),
-                         cache_path=a.token_cache, login_hint=a.login_user, log=log)
+                         cache_path=a.token_cache, login_hint=a.login_user, log=log,
+                         device_callback=getattr(a, "device_callback", None))
 
 
 def cmd_test_login(a, log):
@@ -199,7 +227,7 @@ def cmd_upload(a, log):
         log("PROBA (--dry-run): nista se ne salje, samo prikaz gde bi sta islo.\n")
         cnt: Counter = Counter()
         err = 0
-        for it in iter_inputs(a.inputs, opts):
+        for it in _iter(a, opts):
             if isinstance(it, Error):
                 err += 1
                 report(it.origin, "/".join(it.folder), it.error)
@@ -227,7 +255,7 @@ def cmd_upload(a, log):
 
     t0 = _dt.datetime.now()
     try:
-        n = up.run(iter_inputs(a.inputs, opts), on_error)
+        n = up.run(_iter(a, opts, extra=lambda: dict(up.stats)), on_error)
     except KeyboardInterrupt:
         log("\nPrekinuto. Pokreni istu komandu ponovo - nastavlja gde je stalo.")
         state.close()
@@ -236,6 +264,8 @@ def cmd_upload(a, log):
     state.close()
     report.close()
     s = up.stats
+    if getattr(a, "progress", None):
+        a.progress(dict(s, procitano=n))
     log(f"\nGOTOVO za {(_dt.datetime.now() - t0)}: procitano {n}, uvezeno {s['uvezeno']} "
         f"({s['bajtova'] / 1048576:.1f} MB), vec ranije uvezeno {s['preskoceno_vec_uvezeno']}, "
         f"gresaka {s['greska']}")

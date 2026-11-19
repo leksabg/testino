@@ -5,3 +5,8 @@ __pycache__/
 mailconv_state.sqlite*
 mailconv_greske.csv
 mailconv.log
+.instalirano
+.venv/
+build/
+dist/
+*.spec

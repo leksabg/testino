@@ -25,7 +25,25 @@ Zaštita od problema:
 
 ---
 
-## 1. Instalacija
+## Najlakše: aplikacija na klik (GUI)
+
+Ne moraš da kucaš komande.
+
+| Sistem | Pokretanje |
+|---|---|
+| **Windows, bez Pythona** | Preuzmi `mailconv.exe`: GitHub → **Actions** → **Windows EXE** → poslednji uspešan run → *Artifacts* → `mailconv-windows`. Raspakuj ZIP i pokreni duplim klikom. |
+| **Windows, sa Pythonom** | Dupli klik na **`Pokreni mailconv.bat`**. Pri prvom pokretanju sam instalira potrebne pakete. |
+| **Mac / Linux** | Dupli klik na **`Pokreni mailconv (Mac-Linux).command`**. Na Linux-u treba paket `python3-tk`. |
+
+U prozoru:
+1. **Dodaj fajlove… / Dodaj folder…** – PST, MSG, EML, MBOX, OLM, ZIP ili ceo folder.
+2. Upiši **Mailbox** (npr. `office@firma.rs`), **Client ID** i **Tenant**. Dugme **Uputstvo: podešavanje Microsoft 365…** pokazuje kako se dobijaju, sa gotovim PowerShell komandama.
+3. **Test prijave** → otvara se prozor sa kodom. Kod je već kopiran u clipboard i stranica za prijavu je već otvorena, pa se samo prijaviš nalogom koji ima Full Access.
+4. **Proba (bez slanja)** pokazuje gde bi šta otišlo, a **▶ POKRENI UVOZ** pokreće uvoz.
+
+**Zaustavi** može bilo kad: sledeće pokretanje nastavlja gde je stalo. Podešavanja (bez lozinki i secret-a), log, izveštaj grešaka i baza uvezenih poruka su u folderu `mailconv` u tvom korisničkom folderu. Do njega vodi dugme **Folder sa izveštajima**.
+
+## 1. Instalacija (za komandnu liniju)
 
 Treba ti Python 3.9 ili noviji (Windows, macOS ili Linux).
 
