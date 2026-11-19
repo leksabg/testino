@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.mailconv_token_cache.json
+mailconv_state.sqlite*
+mailconv_greske.csv
+mailconv.log
