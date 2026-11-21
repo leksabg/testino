@@ -204,6 +204,7 @@ class App(tk.Tk):
         hf.grid(row=r, column=0, columnspan=4, sticky="w", pady=(4, 0))
         ttk.Button(hf, text="Uputstvo: podešavanje Microsoft 365…", command=self._help).pack(side="left")
         ttk.Button(hf, text="Test prijave", command=self._test_login).pack(side="left", padx=6)
+        ttk.Button(hf, text="Odjavi se / promeni nalog", command=self._logout).pack(side="left")
 
         # convert polja
         self.fc = ttk.Frame(f2)
@@ -409,6 +410,22 @@ Posle izmene prava sačekaj 15–60 min pre prvog pokušaja.
                    command=lambda: webbrowser.open("https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade")
                    ).pack(side="left", padx=6)
         ttk.Button(bf, text="Zatvori", command=w.destroy).pack(side="right")
+
+    def _logout(self):
+        p = DATA_DIR / "token_cache.json"
+        if not p.exists():
+            messagebox.showinfo("Odjava", "Nisi prijavljen – sledeća prijava će pitati za nalog.")
+            return
+        if self.worker and self.worker.is_alive():
+            messagebox.showinfo("Zauzeto", "Sačekaj da se trenutni posao završi ili klikni Zaustavi.")
+            return
+        try:
+            p.unlink()
+        except OSError as exc:
+            messagebox.showerror("Odjava", f"Ne mogu da obrišem {p}:\n{exc}")
+            return
+        self._append("Odjavljen. Sledeća prijava pita za nalog.\n", "ok")
+        messagebox.showinfo("Odjava", "Odjavljen si.\nSledeći put (npr. 'Test prijave') biraš nalog ponovo.")
 
     def _open_errors(self):
         p = DATA_DIR / "greske.csv"

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
 import datetime as _dt
 import os
 import sys
@@ -196,6 +197,98 @@ def _token_provider(a, log):
                          login=getattr(a, "login", "browser"))
 
 
+def _jwt_claims(token: str) -> dict:
+    import base64
+
+    try:
+        part = token.split(".")[1]
+        part += "=" * (-len(part) % 4)
+        return json.loads(base64.urlsafe_b64decode(part))
+    except Exception:
+        return {}
+
+
+def diagnose_auth(cfg, tp, log) -> str:
+    """Posle 'AUTHENTICATE failed': utvrdi tacan uzrok i vrati kratak opis."""
+    from .imap_upload import Connection
+
+    log("\n--- DIJAGNOZA PRIJAVE ---")
+    if tp is None:
+        msg = "Server je odbio korisnika/lozinku."
+        log(msg)
+        return msg
+    claims = _jwt_claims(tp.get())
+    who = claims.get("upn") or claims.get("preferred_username") or claims.get("unique_name") or ""
+    scp = claims.get("scp", "")
+    roles = claims.get("roles", [])
+    log(f"Prijavljeni nalog: {who or '(aplikacija, bez korisnika)'}")
+    log(f"Tenant: {claims.get('tid', '?')}   Dozvole u tokenu: {scp or roles}")
+    mb = cfg.mailbox
+    if tp.mode == "app":
+        if "IMAP.AccessAsApp" not in roles:
+            msg = ("Token nema dozvolu IMAP.AccessAsApp. U App registration → API permissions dodaj "
+                   "Office 365 Exchange Online → Application → IMAP.AccessAsApp i klikni Grant admin consent.")
+        else:
+            msg = ("Aplikacija nema pristup mailbox-u. U Exchange Online PowerShell:\n"
+                   "  New-ServicePrincipal -AppId <CLIENT_ID> -ObjectId <ENTERPRISE_APP_OBJECT_ID>\n"
+                   f"  Add-MailboxPermission -Identity {mb} -User <ENTERPRISE_APP_OBJECT_ID> -AccessRights FullAccess\n"
+                   f"  Set-CASMailbox -Identity {mb} -ImapEnabled $true")
+        log(msg)
+        return msg
+    if "IMAP.AccessAsUser.All" not in scp:
+        msg = ("Token nema dozvolu IMAP.AccessAsUser.All. U App registration → API permissions dodaj "
+               "Microsoft Graph → Delegated → IMAP.AccessAsUser.All, klikni Grant admin consent, "
+               "pa 'Odjavi se / promeni nalog' i prijavi se ponovo.")
+        log(msg)
+        return msg
+    if who and who.lower() == mb.lower():
+        own_ok = False
+    else:
+        own_ok = None
+        if who:
+            import dataclasses
+            log(f"Probam IMAP prijavu na sopstveni mailbox ({who})...")
+            try:
+                Connection(dataclasses.replace(cfg, mailbox=who), tp).open().logout()
+                own_ok = True
+                log("  -> sopstveni mailbox RADI.")
+            except Exception as exc:
+                own_ok = False
+                log(f"  -> ni sopstveni mailbox ne radi ({exc}).")
+    if own_ok:
+        msg = (f"Prijava i IMAP rade za {who}, ali Exchange ne pušta taj nalog u {mb}.\n\n"
+               "U Exchange Online PowerShell (Connect-ExchangeOnline) pokreni:\n"
+               f"  Set-CASMailbox -Identity {mb} -ImapEnabled $true\n"
+               f"  Add-MailboxPermission -Identity {mb} -User {who} -AccessRights FullAccess -AutoMapping $false\n\n"
+               "Provera:\n"
+               f"  Get-CASMailbox {mb} | fl ImapEnabled\n"
+               f"  Get-MailboxPermission {mb} -User {who}\n\n"
+               "Posle izmene sačekaj 30–60 minuta (Exchange sporo primenjuje prava).")
+    else:
+        msg = (f"IMAP ne radi ni za prijavljeni nalog ({who or '?'}). Verovatno je IMAP isključen.\n\n"
+               "U Exchange Online PowerShell pokreni:\n"
+               f"  Set-CASMailbox -Identity {who or '<TVOJ NALOG>'} -ImapEnabled $true\n"
+               f"  Set-CASMailbox -Identity {mb} -ImapEnabled $true\n"
+               f"  Add-MailboxPermission -Identity {mb} -User {who or '<TVOJ NALOG>'} -AccessRights FullAccess -AutoMapping $false\n\n"
+               "Ako se prijavljuješ pogrešnim nalogom, klikni 'Odjavi se / promeni nalog'.\n"
+               "Posle izmene sačekaj 30–60 minuta.")
+    log(msg)
+    return msg
+
+
+def _open_or_diagnose(c, cfg, tp, log):
+    import imaplib
+
+    try:
+        return c.open()
+    except imaplib.IMAP4.error as exc:
+        if "AUTHENTICATE" not in str(exc).upper() and "AUTHENTICATIONFAILED" not in str(exc).upper() \
+                and "LOGIN" not in str(exc).upper():
+            raise
+        log(f"Exchange je odbio prijavu na {cfg.mailbox}: {exc}")
+        raise SystemExit(diagnose_auth(cfg, tp, log))
+
+
 def cmd_test_login(a, log):
     from .imap_upload import FolderMap, Connection
 
@@ -203,7 +296,10 @@ def cmd_test_login(a, log):
     tp = _token_provider(a, log)
     c = Connection(cfg, tp)
     log(f"Povezujem se na {cfg.host}:{cfg.port} kao {cfg.mailbox} ...")
-    conn = c.open()
+    conn = _open_or_diagnose(c, cfg, tp, log)
+    if tp is not None:
+        cl = _jwt_claims(tp.get())
+        log(f"Prijavljeni nalog: {cl.get('upn') or cl.get('preferred_username') or '(aplikacija)'}")
     fm = FolderMap("", True, log)
     fm.load(conn)
     log("OK! Prijava uspela. Folderi u mailbox-u:")
@@ -245,7 +341,9 @@ def cmd_upload(a, log):
     state = State(a.state)
     up = Uploader(cfg, tp, state, fm, log, report)
     log(f"Povezujem se na {cfg.host} -> mailbox {cfg.mailbox} ({cfg.workers} paralelnih konekcija)")
-    ctl = up.connect_and_list()
+    from .imap_upload import Connection
+    ctl = Connection(cfg, tp)
+    fm.load(_open_or_diagnose(ctl, cfg, tp, log))
     ctl.close()
     log(f"Pronadjeno {len(fm.existing)} postojecih foldera. Krecem uvoz...\n")
 

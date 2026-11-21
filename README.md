@@ -162,7 +162,8 @@ python -m mailconv upload ulaz/ --mailbox korisnik@firma.rs --auth password --ho
 
 | Simptom | Rešenje |
 |---|---|
-| `AUTHENTICATE failed` | 1) `Set-CASMailbox <shared> -ImapEnabled $true`. 2) Prijavljeni korisnik ili aplikacija ima FullAccess na **taj** mailbox. 3) Dat je admin consent. 4) `--tenant` je tačan. 5) Za varijantu B: `New-ServicePrincipal` je urađen sa **Enterprise app** Object ID-jem. Posle izmena prava sačekaj do 30–60 min. |
+| `AUTHENTICATE failed` | Program posle ove greške sam pokreće dijagnozu: pokaže kojim si nalogom prijavljen, proveri da li IMAP radi za tvoj sopstveni mailbox i ispiše tačne PowerShell komande. Najčešći uzroci: 1) `Set-CASMailbox <shared> -ImapEnabled $true`. 2) Prijavljeni korisnik ili aplikacija ima FullAccess na **taj** mailbox. 3) Dat je admin consent. 4) `--tenant` je tačan. 5) Za varijantu B: `New-ServicePrincipal` je urađen sa **Enterprise app** Object ID-jem. Posle izmena prava sačekaj do 30–60 min. |
+| Prijavio sam se pogrešnim nalogom / hoću drugi nalog | U programu klikni **Odjavi se / promeni nalog**. Ručno: obriši `token_cache.json` iz foldera `mailconv` u korisničkom folderu (`C:\Users\<ime>\mailconv`). |
 | `AADSTS7000218 … client_assertion or client_secret` | Nije uključeno *Allow public client flows* (varijanta A). |
 | `AADSTS500113` / `AADSTS50011` (reply address) | Fali Redirect URI: App registration → Authentication → Add a platform → Mobile and desktop applications → `http://localhost`. |
 | `AADSTS65001 … consent` | Klikni *Grant admin consent* u API permissions. |
