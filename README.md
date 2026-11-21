@@ -38,7 +38,7 @@ Ne moraš da kucaš komande.
 U prozoru:
 1. **Dodaj fajlove… / Dodaj folder…** – PST, MSG, EML, MBOX, OLM, ZIP ili ceo folder.
 2. Upiši **Mailbox** (npr. `office@firma.rs`), **Client ID** i **Tenant**. Dugme **Uputstvo: podešavanje Microsoft 365…** pokazuje kako se dobijaju, sa gotovim PowerShell komandama.
-3. **Test prijave** → otvara se prozor sa kodom. Kod je već kopiran u clipboard i stranica za prijavu je već otvorena, pa se samo prijaviš nalogom koji ima Full Access.
+3. **Test prijave** → otvara se obična Microsoft stranica za prijavu u browseru (email, lozinka, MFA). Prijaviš se nalogom koji ima Full Access i vratiš se u program. Prijava se pamti, pa je sledeći put ne ponavljaš.
 4. **Proba (bez slanja)** pokazuje gde bi šta otišlo, a **▶ POKRENI UVOZ** pokreće uvoz.
 
 **Zaustavi** može bilo kad: sledeće pokretanje nastavlja gde je stalo. Podešavanja (bez lozinki i secret-a), log, izveštaj grešaka i baza uvezenih poruka su u folderu `mailconv` u tvom korisničkom folderu. Do njega vodi dugme **Folder sa izveštajima**.
@@ -68,9 +68,10 @@ Alat se pokreće iz foldera repozitorijuma kao `python -m mailconv …`.
 Prijavljuješ se nalogom koji ima **Full Access** na shared mailbox. Shared mailbox nema lozinku i to ovde ne smeta.
 
 1. **Entra admin center → App registrations → New registration**
-   - Name: `mailconv`, *Accounts in this organizational directory only*, Redirect URI ostavi prazno → **Register**.
+   - Name: `mailconv`, *Accounts in this organizational directory only*.
+   - Redirect URI: izaberi **Public client/native (mobile & desktop)** i upiši `http://localhost` → **Register**.
    - Zapiši **Application (client) ID** i **Directory (tenant) ID**.
-2. **Authentication** → *Advanced settings* → **Allow public client flows = Yes** → Save.
+2. **Authentication** → *Advanced settings* → **Allow public client flows = Yes** → Save. Ako je aplikacija već napravljena bez Redirect URI-ja, ovde dodaj: **Add a platform → Mobile and desktop applications → `http://localhost`**.
 3. **API permissions → Add a permission → Microsoft Graph → Delegated** → izaberi `IMAP.AccessAsUser.All` i `offline_access` → **Grant admin consent**.
 4. Exchange Online PowerShell (`Connect-ExchangeOnline`):
 
@@ -119,7 +120,7 @@ python -m mailconv scan "D:\Stari mejlovi"
 python -m mailconv test-login --mailbox office@firma.rs
 ```
 
-Pri prvom pokretanju dobiješ kod i link (`https://microsoft.com/devicelogin`). Tamo se prijaviš nalogom koji ima Full Access. Token se pamti u `.mailconv_token_cache.json`, pa se sledeći put ne prijavljuješ ponovo.
+Pri prvom pokretanju otvara se obična Microsoft prijava u browseru. Prijaviš se nalogom koji ima Full Access. Token se pamti u `.mailconv_token_cache.json`, pa se sledeći put ne prijavljuješ ponovo. Na serveru bez browsera dodaj `--login code` za prijavu kodom.
 
 **3) Proba bez slanja** (prikazuje u koji folder ide koliko poruka):
 
@@ -163,6 +164,7 @@ python -m mailconv upload ulaz/ --mailbox korisnik@firma.rs --auth password --ho
 |---|---|
 | `AUTHENTICATE failed` | 1) `Set-CASMailbox <shared> -ImapEnabled $true`. 2) Prijavljeni korisnik ili aplikacija ima FullAccess na **taj** mailbox. 3) Dat je admin consent. 4) `--tenant` je tačan. 5) Za varijantu B: `New-ServicePrincipal` je urađen sa **Enterprise app** Object ID-jem. Posle izmena prava sačekaj do 30–60 min. |
 | `AADSTS7000218 … client_assertion or client_secret` | Nije uključeno *Allow public client flows* (varijanta A). |
+| `AADSTS500113` / `AADSTS50011` (reply address) | Fali Redirect URI: App registration → Authentication → Add a platform → Mobile and desktop applications → `http://localhost`. |
 | `AADSTS65001 … consent` | Klikni *Grant admin consent* u API permissions. |
 | Poruka preko limita | `Set-Mailbox <shared> -MaxReceiveSize 150MB`. Exchange Online ne prima poruke veće od 150 MB. |
 | Sporo ili throttling | Normalno je da Microsoft usporava. Alat sam čeka i pokušava ponovo. Smanji `--workers` ako ima mnogo `~` linija u logu. |

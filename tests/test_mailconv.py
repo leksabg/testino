@@ -125,3 +125,40 @@ def test_parse_list():
     assert res[0][2] == "Sent Items" and "\\sent" in res[0][0]
     assert res[1][2] == "INBOX"
     assert res[2][2] == "Weird"
+
+
+def test_browser_login_flow():
+    import pytest
+    from mailconv.auth import TokenProvider
+
+    class Fake:
+        def __init__(self, mode):
+            self.mode = mode
+
+        def get_accounts(self, username=None):
+            return []
+
+        def acquire_token_interactive(self, scopes, **kw):
+            assert kw["prompt"] == "select_account"
+            if self.mode == "ok":
+                return {"access_token": "TOK", "expires_in": 3600}
+            if self.mode == "redirect":
+                return {"error": "invalid_request", "error_description": "AADSTS500113: No reply address"}
+            raise RuntimeError("no browser")
+
+        def initiate_device_flow(self, scopes):
+            return {"user_code": "X", "message": "kod X"}
+
+        def acquire_token_by_device_flow(self, flow):
+            return {"access_token": "DEV", "expires_in": 3600}
+
+    t = TokenProvider("device", "00000000-0000-0000-0000-000000000000", "firma.rs",
+                      cache_path=None, log=lambda *_: None)
+    t.cache.has_state_changed = False
+    t.app = Fake("ok")
+    assert t.get() == "TOK"
+    t.app, t._token = Fake("redirect"), None
+    with pytest.raises(SystemExit, match="Redirect URI"):
+        t.get()
+    t.app, t._token = Fake("nobrowser"), None
+    assert t.get() == "DEV"  # bez browsera -> prijava kodom

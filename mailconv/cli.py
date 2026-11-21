@@ -192,7 +192,8 @@ def _token_provider(a, log):
     return TokenProvider(a.auth, client_id, tenant,
                          secret=a.client_secret or os.environ.get("MAILCONV_CLIENT_SECRET"),
                          cache_path=a.token_cache, login_hint=a.login_user, log=log,
-                         device_callback=getattr(a, "device_callback", None))
+                         device_callback=getattr(a, "device_callback", None),
+                         login=getattr(a, "login", "browser"))
 
 
 def cmd_test_login(a, log):
@@ -303,6 +304,9 @@ def build_parser():
                              "app = aplikacija sa client secret; password = on-prem/drugi IMAP server")
         sp.add_argument("--client-id", help="Application (client) ID iz Entra ID (ili env MAILCONV_CLIENT_ID)")
         sp.add_argument("--tenant", help="tenant ID ili domen, npr. firma.onmicrosoft.com (env MAILCONV_TENANT)")
+        sp.add_argument("--login", choices=["browser", "code"], default="browser",
+                        help="browser = obicna Microsoft prijava (podrazumevano); code = prijava kodom "
+                             "(za server bez browsera)")
         sp.add_argument("--client-secret", help="za --auth app (bolje env MAILCONV_CLIENT_SECRET)")
         sp.add_argument("--login-user", help="za --auth password: korisnik za prijavu (ako nije --mailbox)")
         sp.add_argument("--password", help="za --auth password (bolje env MAILCONV_PASSWORD)")

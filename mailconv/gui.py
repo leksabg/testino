@@ -361,9 +361,13 @@ class App(tk.Tk):
 
 A) Prijava korisnika (preporučeno)
 1. entra.microsoft.com → App registrations → New registration
-   Ime: mailconv, "Single tenant", Redirect URI prazno → Register.
+   Ime: mailconv, "Single tenant".
+   Redirect URI: izaberi "Public client/native (mobile & desktop)" i upiši  http://localhost
+   → Register.
    Prepiši "Application (client) ID" i "Directory (tenant) ID" u ovaj program.
-2. Authentication → Advanced settings → "Allow public client flows" = Yes → Save.
+2. (Ako je aplikacija već napravljena bez Redirect URI-ja:) Authentication → Add a platform →
+   Mobile and desktop applications → upiši  http://localhost  → Configure.
+   Na istoj strani: "Allow public client flows" = Yes → Save.
 3. API permissions → Add a permission → Microsoft Graph → Delegated →
    IMAP.AccessAsUser.All i offline_access → "Grant admin consent".
 4. Exchange Online PowerShell (Connect-ExchangeOnline):

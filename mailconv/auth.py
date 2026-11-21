@@ -9,13 +9,23 @@ IMAP_DELEGATED_SCOPE = ["https://outlook.office.com/IMAP.AccessAsUser.All"]
 IMAP_APP_SCOPE = ["https://outlook.office365.com/.default"]
 
 
+_SUCCESS_HTML = """<html><head><meta charset="utf-8"><title>mailconv</title></head>
+<body style="font-family:Segoe UI,Arial;text-align:center;margin-top:80px">
+<h2 style="color:#2e7d32">&#10004; Prijava uspela</h2>
+<p>Možeš da zatvoriš ovaj tab i vratiš se u mailconv.</p></body></html>"""
+_ERROR_HTML = """<html><head><meta charset="utf-8"><title>mailconv</title></head>
+<body style="font-family:Segoe UI,Arial;text-align:center;margin-top:80px">
+<h2 style="color:#c62828">Prijava nije uspela</h2><p>$error: $error_description</p>
+<p>Vrati se u mailconv za detalje.</p></body></html>"""
+
+
 class TokenProvider:
     """mode: 'device' (prijava korisnika sa Full Access pravom na shared mailbox)
              'app'    (aplikacija + client secret, IMAP.AccessAsApp)"""
 
     def __init__(self, mode: str, client_id: str, tenant: str, secret: str | None = None,
                  cache_path: str = ".mailconv_token_cache.json", login_hint: str | None = None,
-                 log=print, device_callback=None):
+                 log=print, device_callback=None, login: str = "browser"):
         try:
             import msal
         except ImportError as e:
@@ -23,6 +33,7 @@ class TokenProvider:
         self.mode = mode
         self.log = log
         self.device_callback = device_callback  # GUI: prozor sa kodom za prijavu
+        self.login = login  # "browser" = obicna Microsoft prijava u browseru, "code" = kod
         self.lock = threading.Lock()
         self.login_hint = login_hint
         self.cache_path = cache_path
@@ -48,6 +59,29 @@ class TokenProvider:
             with os.fdopen(fd, "w", encoding="utf-8") as f:
                 f.write(self.cache.serialize())
 
+    def _browser_login(self):
+        """Otvara standardnu Microsoft stranicu za prijavu (email, lozinka, MFA).
+        Vraca None ako browser ne moze da se otvori -> prelazi se na prijavu kodom."""
+        self.log("Otvaram Microsoft prijavu u browseru... Prijavi se nalogom koji ima "
+                 "Full Access na mailbox, pa se vrati ovde.")
+        try:
+            res = self.app.acquire_token_interactive(
+                IMAP_DELEGATED_SCOPE, login_hint=self.login_hint, prompt="select_account",
+                timeout=600, success_template=_SUCCESS_HTML, error_template=_ERROR_HTML)
+        except Exception as exc:  # nema browsera / port zauzet itd.
+            self.log(f"Prijava u browseru nije moguca ({exc}) - prelazim na prijavu kodom.")
+            return None
+        err = (res or {}).get("error_description") or ""
+        if "AADSTS50011" in err or "AADSTS500113" in err or "reply address" in err.lower():
+            raise SystemExit(
+                "U registraciji aplikacije fali Redirect URI za prijavu u browseru.\n\n"
+                "Entra admin center → App registrations → mailconv → Authentication → "
+                "Add a platform → Mobile and desktop applications → upiši  http://localhost  → Configure.\n\n"
+                "Sačekaj minut i pokušaj ponovo.")
+        if res and "error" in res and res.get("error") in ("access_denied", "authorization_pending"):
+            raise SystemExit("Prijava je otkazana.")
+        return res
+
     def get(self, force: bool = False) -> str:
         with self.lock:
             if not force and self._token and time.time() < self._exp - 300:
@@ -60,6 +94,8 @@ class TokenProvider:
                 if accounts:
                     res = self.app.acquire_token_silent(IMAP_DELEGATED_SCOPE, account=accounts[0],
                                                         force_refresh=force)
+                if not res and self.login == "browser":
+                    res = self._browser_login()
                 if not res:
                     flow = self.app.initiate_device_flow(scopes=IMAP_DELEGATED_SCOPE)
                     if "user_code" not in flow:
