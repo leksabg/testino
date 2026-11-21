@@ -127,9 +127,12 @@ def test_parse_list():
     assert res[2][2] == "Weird"
 
 
-def test_browser_login_flow():
+def test_browser_login_flow(monkeypatch):
+    import msal
     import pytest
     from mailconv.auth import TokenProvider
+
+    monkeypatch.setattr(msal, "PublicClientApplication", lambda *a, **k: None)  # bez mreze
 
     class Fake:
         def __init__(self, mode):
